@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body {
+    @apply bg-cream text-ink font-round antialiased;
+    /* 平板上避免長按選字、雙擊縮放造成誤觸 */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    overscroll-behavior: none;
+  }
+  /* 可輸入欄位仍要能選取 */
+  input, textarea { -webkit-user-select: text; user-select: text; }
+
+  button { touch-action: manipulation; }
+
+  :focus-visible {
+    outline: 4px solid #6FC2C0;
+    outline-offset: 3px;
+    border-radius: 12px;
+  }
+}
+
+@layer components {
+  /* 所有可點擊區塊最小 88px，符合幼兒觸控與動作協調需求 */
+  .tap {
+    @apply min-h-[88px] min-w-[88px] select-none active:translate-y-[2px] transition-transform;
+  }
+  .card {
+    @apply bg-paper border-2 border-line rounded-blob shadow-soft;
+  }
+}
+
+/* 低感官負荷模式：關掉所有動畫與轉場 */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
