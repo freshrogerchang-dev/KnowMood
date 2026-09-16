@@ -7,7 +7,8 @@ import Mimic from './screens/Mimic'
 import Journal from './screens/Journal'
 import Rewards from './screens/Rewards'
 import ParentSettings from './screens/ParentSettings'
-import { stopSpeaking } from './lib/speech'
+import { installSpeechUnlock, stopSpeaking } from './lib/speech'
+import { useApp } from './lib/store'
 
 const SCREENS = {
   home: Home,
@@ -22,6 +23,12 @@ const SCREENS = {
 
 export default function App() {
   const [screen, setScreen] = useState('home')
+  const { settings } = useApp()
+
+  // iPad 上第一次發聲一定要由觸控觸發，開機就先掛好解鎖用的監聽
+  useEffect(() => {
+    if (settings.speech !== false) installSpeechUnlock()
+  }, [settings.speech])
 
   const go = useCallback((name) => {
     stopSpeaking() // 換頁時把上一句唸到一半的話停掉
