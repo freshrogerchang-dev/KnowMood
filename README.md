@@ -54,7 +54,23 @@ npm run build      # 打包到 dist/，可直接丟 GitHub Pages / 任何靜態�
 npm run preview
 ```
 
-打包用 `base: './'`，放在任何子路徑都能開。
+打包用 `base: './'`，放在任何子路徑都能開（GitHub Pages 的 `/KnowMood/` 也沒問題）。
+
+### 部署到 GitHub Pages
+
+`.github/workflows/deploy.yml` 已經設好了：**推到預設分支就會自動打包並部署**，
+也可以到 Actions 頁手動按 *Run workflow*。
+
+第一次部署前：
+
+1. repo → **Settings → Pages → Build and deployment → Source** 選 **GitHub Actions**
+   （workflow 裡有 `enablement: true`，多數情況會自動開好，這步只是確認）
+2. 要一併開雲端同步的話，到 **Settings → Secrets and variables → Actions → Variables**
+   新增 `VITE_SUPABASE_URL` 與 `VITE_SUPABASE_ANON_KEY`。
+   沒設也能部署，App 會退回「只存在裝置上」的離線模式。
+
+網址會是 `https://<帳號>.github.io/KnowMood/`。用 iPad 開這個網址後
+「加入主畫面」，之後不用開電腦也能玩。
 
 ### 平板使用建議
 

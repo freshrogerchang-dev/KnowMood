@@ -1,0 +1,61 @@
+# 打包並部署到 GitHub Pages
+# 推到預設分支就會自動更新網站；也可以在 Actions 頁手動按 Run workflow。
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - claude/emotion-recognition-asd-adhd-app-yija24
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時只跑一個部署；排隊中的舊的就取消
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          # 在 repo 的 Settings → Secrets and variables → Actions 設定。
+          # 沒設也能部署，App 會退回「只存在裝置上」的離線模式。
+          # publishable key 本來就會被打包進前端，用 Variables 或 Secrets 都可以。
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+        with:
+          # 如果 repo 還沒開啟 Pages，這裡會自動幫忙開
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
