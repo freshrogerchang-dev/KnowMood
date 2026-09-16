@@ -3,6 +3,7 @@ import { Screen, SpeakButton, BigButton } from '../components/UI'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
 import { activeEmotions, getEmotion } from '../data/emotions'
+import { wordsForIntensity } from '../data/vocabulary'
 import { useApp } from '../lib/store'
 import { speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
@@ -40,17 +41,24 @@ export default function Journal({ go }) {
   const [event, setEvent] = useState('')
   const [emotionId, setEmotionId] = useState(null)
   const [intensity, setIntensity] = useState(null)
+  const [word, setWord] = useState(null)   // 更精準的說法（選填）
   const [showLog, setShowLog] = useState(false)
 
   const emotion = emotionId ? getEmotion(emotionId) : null
+  // 符合這個強度的說法，最多給 3 個 —— 選項太多對 5 歲反而是負擔
+  const vocab = useMemo(
+    () => (emotionId && intensity ? wordsForIntensity(emotionId, intensity).slice(0, 3) : []),
+    [emotionId, intensity],
+  )
 
-  const reset = () => { setStep(0); setEvent(''); setEmotionId(null); setIntensity(null) }
+  const reset = () => { setStep(0); setEvent(''); setEmotionId(null); setIntensity(null); setWord(null) }
 
   const finish = () => {
-    addJournal({ date: todayStr(), event: event.trim() || '今天', emotionId, intensity })
+    const label = word?.word || emotion.name
+    addJournal({ date: todayStr(), event: event.trim() || '今天', emotionId, intensity, word: word?.word || '' })
     addStars(1)
     sfx.star(settings)
-    speak(`記好了！你在${event.trim() || '今天'}覺得${emotion.name}，${INTENSITY[intensity - 1].label}。${emotion.cope}`, settings)
+    speak(`記好了！你在${event.trim() || '今天'}覺得${label}，${INTENSITY[intensity - 1].label}。${emotion.cope}`, settings)
     setStep(3)
   }
 
@@ -71,7 +79,7 @@ export default function Journal({ go }) {
                   <p className="text-sm text-inkSoft">{j.date}</p>
                   <p className="text-xl font-bold truncate">{j.event}</p>
                   <p className="text-lg" style={{ color: e.color }}>
-                    {e.name}・{'●'.repeat(j.intensity)}
+                    {j.word ? `${j.word}（${e.name}）` : e.name}・{'●'.repeat(j.intensity)}
                     <span className="text-line">{'●'.repeat(5 - j.intensity)}</span>
                     <span className="text-inkSoft text-base ml-1">{j.intensity}/5</span>
                   </p>
@@ -186,7 +194,7 @@ export default function Journal({ go }) {
                 <button
                   key={lv.v}
                   type="button"
-                  onClick={() => { sfx.tap(settings); setIntensity(lv.v); speak(`${lv.label}，${lv.v}分`, settings) }}
+                  onClick={() => { sfx.tap(settings); setIntensity(lv.v); setWord(null); speak(`${lv.label}，${lv.v}分`, settings) }}
                   className={`tap card p-2 flex flex-col items-center justify-end gap-1 flex-1 max-w-[132px] transition-all
                     ${intensity === lv.v ? 'ring-8 scale-[1.03]' : 'opacity-80'}`}
                   style={{ borderColor: emotion.color, '--tw-ring-color': `${emotion.color}55` }}
@@ -198,6 +206,41 @@ export default function Journal({ go }) {
                 </button>
               ))}
             </div>
+
+            {settings.richVocab !== false && intensity && vocab.length > 0 && (
+              <div className="w-full max-w-3xl animate-popIn">
+                <p className="text-center text-lg text-inkSoft mb-2">
+                  這種感覺也可以說…（想選再選，不選也可以）
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {vocab.map((w) => (
+                    <button
+                      key={w.word}
+                      type="button"
+                      aria-label={w.word}
+                      onClick={() => {
+                        sfx.tap(settings)
+                        const picked = word?.word === w.word ? null : w
+                        setWord(picked)
+                        if (picked) speak(`${w.word}。${w.when}`, settings)
+                      }}
+                      className={`tap min-h-0 h-auto px-4 py-2 rounded-2xl border-2 text-2xl font-bold ${
+                        word?.word === w.word ? 'ring-4' : 'opacity-75'
+                      }`}
+                      style={{
+                        borderColor: emotion.color,
+                        color: emotion.color,
+                        '--tw-ring-color': `${emotion.color}55`,
+                        backgroundColor: word?.word === w.word ? `${emotion.color}1F` : undefined,
+                      }}
+                    >
+                      <Ruby text={w.word} zhuyin={w.zhuyin} show={settings.zhuyin} />
+                    </button>
+                  ))}
+                </div>
+                {word && <p className="text-center text-lg mt-2">{word.when}</p>}
+              </div>
+            )}
 
             <div className="flex gap-3 items-center">
               <button type="button" onClick={() => setStep(1)} className="text-inkSoft text-lg underline">◀ 回上一步</button>
@@ -220,7 +263,8 @@ export default function Journal({ go }) {
                 <p className="text-xl text-inkSoft">{todayStr()}</p>
                 <p className="text-2xl font-bold">{event || '今天'}</p>
                 <p className="text-2xl" style={{ color: emotion.color }}>
-                  {emotion.name}・{INTENSITY[intensity - 1].label}（{intensity}/5）
+                  {word ? `${word.word}（${emotion.name}）` : emotion.name}・
+                  {INTENSITY[intensity - 1].label}（{intensity}/5）
                 </p>
               </div>
             </div>

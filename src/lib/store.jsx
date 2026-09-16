@@ -14,6 +14,7 @@ export const DEFAULT_SETTINGS = {
   sound: true,         // 音效
   motion: true,        // 動畫
   zhuyin: true,        // 情緒名稱加注音
+  richVocab: true,     // 情緒詞彙擴充（圖鑑的「還可以這樣說」+ 日記的精準用詞）
   lowSensory: false,   // 低感官負荷模式
 }
 
@@ -163,7 +164,7 @@ export function AppProvider({ children }) {
             settings: remoteNewer ? { ...DEFAULT_SETTINGS, ...(remote.settings || {}) } : prev.settings,
             journal: mergeById(prev.journal, journal.data, (r) => ({
               id: r.id, date: r.entry_date, event: r.event_text, emotionId: r.emotion_id,
-              intensity: r.intensity, note: r.note || '', ts: r.created_at,
+              intensity: r.intensity, note: r.note || '', word: r.word || '', ts: r.created_at,
             })).sort((a, b) => (a.date < b.date ? 1 : -1)),
             attempts: mergeById(prev.attempts, attempts.data, (r) => ({
               id: r.id, ts: r.created_at, mode: r.mode, emotionId: r.emotion_id,
@@ -205,11 +206,11 @@ export function AppProvider({ children }) {
         update((prev) => ({ ...prev, attempts: [row, ...prev.attempts].slice(0, MAX_ATTEMPTS) }))
       },
 
-      addJournal: ({ date, event, emotionId, intensity, note = '' }) => {
-        const row = { id: uid(), date, event, emotionId, intensity, note, ts: new Date().toISOString() }
+      addJournal: ({ date, event, emotionId, intensity, note = '', word = '' }) => {
+        const row = { id: uid(), date, event, emotionId, intensity, note, word, ts: new Date().toISOString() }
         pendingRows.current.journal.push({
           id: row.id, profile_id: state.profileId, entry_date: date, event_text: event,
-          emotion_id: emotionId, intensity, note, created_at: row.ts,
+          emotion_id: emotionId, intensity, note, word: word || null, created_at: row.ts,
         })
         update((prev) => ({ ...prev, journal: [row, ...prev.journal] }))
         return row

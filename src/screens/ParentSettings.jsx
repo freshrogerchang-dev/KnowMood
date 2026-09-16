@@ -192,6 +192,12 @@ export default function ParentSettings({ go }) {
           <Toggle label="音效" value={settings.sound} onChange={(sound) => setSettings({ sound })} />
           <Toggle label="動畫" value={settings.motion} onChange={(motion) => setSettings({ motion })} />
           <Toggle label="情緒名稱加注音" value={settings.zhuyin} onChange={(zhuyin) => setSettings({ zhuyin })} />
+          <Toggle
+            label="情緒詞彙擴充"
+            note="圖鑑多一個「還可以這樣說」分頁（如：舒服→滿足→高興→幸福→興奮），記心情時也會提示更精準的說法。孩子剛開始學時可以先關掉。"
+            value={settings.richVocab !== false}
+            onChange={(richVocab) => setSettings({ richVocab })}
+          />
         </Section>
 
         <Section title="練習紀錄" note="正確率只計算「第一次就答對」的比例。">
@@ -242,7 +248,9 @@ export default function ParentSettings({ go }) {
                 return (
                   <div key={j.id} className="flex items-center gap-2 text-lg">
                     <span className="text-inkSoft text-sm w-24 shrink-0">{j.date}</span>
-                    <span className="w-14 shrink-0" style={{ color: e?.color }}>{e?.name || '—'}</span>
+                    <span className="w-24 shrink-0 truncate" style={{ color: e?.color }}>
+                      {j.word || e?.name || '—'}
+                    </span>
                     <span className="w-24 shrink-0 text-base text-inkSoft">
                       {INTENSITY[j.intensity - 1]?.label}（{j.intensity}）
                     </span>
