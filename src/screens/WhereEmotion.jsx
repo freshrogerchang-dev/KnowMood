@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, SpeakButton, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
@@ -152,21 +153,21 @@ export default function WhereEmotion({ go }) {
               >
                 <span className="text-4xl md:text-5xl" aria-hidden="true">{c.icon}</span>
                 <span className="text-xl md:text-2xl font-bold leading-snug">{c.text}</span>
-                {isFound && <span className="text-2xl" aria-hidden="true">✅</span>}
+                {isFound && <Icon name="check" size={22} color="#5FAE86" />}
               </button>
             )
           })}
         </div>
 
         {missed.length > 0 && !solved && (
-          <p className="text-xl text-inkSoft">沒關係，那個是別的心情的反應 👍</p>
+          <p className="text-xl text-inkSoft flex items-center justify-center gap-1">沒關係，那個是別的心情的反應<Icon name="thumbsUp" size={20} /></p>
         )}
 
         {/* 找完之後：這個情緒在身體的哪裡 */}
         {solved && (
           <div className="w-full flex flex-col items-center gap-3 animate-popIn">
             <div className="card w-full p-4 flex items-start gap-4" style={{ '--edge': target.color }}>
-              <span className="text-5xl shrink-0" aria-hidden="true">🧍</span>
+              <Icon name="where" size={48} color={target.color} tint="none" className="shrink-0" />
               <div className="flex-1">
                 <p className="text-xl font-bold mb-1" style={{ color: target.color }}>
                   「{target.name}」在身體的：{body.where}
@@ -179,7 +180,7 @@ export default function WhereEmotion({ go }) {
               <SpeakButton text={body.feel} className="w-[56px] h-[56px] min-w-0 min-h-0 text-2xl shrink-0" />
             </div>
             <BigButton onClick={next} color="#93C08A">
-              {qi + 1 >= len ? '看看拿到幾顆星星 ⭐' : '下一個心情 ▶'}
+              {qi + 1 >= len ? <>看看拿到幾顆星星<Icon name="star" size={26} color="#D8AE57" /></> : '下一個心情 ▶'}
             </BigButton>
           </div>
         )}

@@ -3,22 +3,23 @@ import { useApp } from '../lib/store'
 import { speak } from '../lib/speech'
 import { StarBadge, HoldToEnter } from '../components/UI'
 import EmotionFace from '../components/EmotionFace'
+import Icon from '../components/Icon'
 import { activeEmotions } from '../data/emotions'
 
 // 每張卡片有自己的色系（低飽和、彼此分得開），右下角壓一個半透明的表情當背景，
 // 讓六個模式一眼就能用顏色 + 表情記住，不用先讀字。
 const MODES = [
-  { id: 'gallery',   icon: '📚', title: '情緒圖鑑',     desc: '看看每種心情長什麼樣子', bg: '#EFD9A0', edge: '#C9A35C', ghost: 'happy' },
-  { id: 'where',     icon: '🧍', title: '情緒在哪裡？', desc: '身體會有什麼反應',       bg: '#BFDCD8', edge: '#7BAFAA', ghost: 'calm' },
-  { id: 'match',     icon: '🎯', title: '配對遊戲',     desc: '找出正確的表情',         bg: '#BFD4E8', edge: '#7E9DBC', ghost: 'surprised' },
-  { id: 'scenario',  icon: '🧩', title: '情境猜猜看',   desc: '他現在是什麼心情？',     bg: '#D3CBE8', edge: '#9C8FC2', ghost: 'sad' },
-  { id: 'detective', icon: '🔍', title: '情緒小偵探',   desc: '找線索，猜心情有多強',   bg: '#E4D3BC', edge: '#B99A75', ghost: 'scared' },
-  { id: 'voice',     icon: '👂', title: '聲音裡的情緒', desc: '聽聽看他是什麼心情',     bg: '#E0D8EC', edge: '#9C8FC2', ghost: 'tired' },
-  { id: 'family',    icon: '👪', title: '真人表情',     desc: '看看家人的表情',         bg: '#E8D7C3', edge: '#B99A75', ghost: 'sad' },
-  { id: 'mimic',     icon: '🪞', title: '表情模仿',     desc: '照著做做看',             bg: '#EFC7B6', edge: '#C68E75', ghost: 'angry' },
-  { id: 'journal',   icon: '📔', title: '今天的心情',   desc: '說說今天發生的事',       bg: '#C4DCBC', edge: '#86AB7C', ghost: 'shy' },
-  { id: 'calm',      icon: '🌿', title: '冷靜角',       desc: '心情太大的時候來這裡',   bg: '#DCE4DA', edge: '#93A88C', ghost: 'happy' },
-  { id: 'rewards',   icon: '🎁', title: '我的貼紙簿',   desc: '看看收集到的貼紙',       bg: '#EFC9D6', edge: '#C48EA3', ghost: 'happy' },
+  { id: 'gallery',   icon: 'gallery',   title: '情緒圖鑑',     desc: '看看每種心情長什麼樣子', bg: '#EFD9A0', edge: '#C9A35C', ghost: 'happy' },
+  { id: 'where',     icon: 'where',     title: '情緒在哪裡？', desc: '身體會有什麼反應',       bg: '#BFDCD8', edge: '#7BAFAA', ghost: 'calm' },
+  { id: 'match',     icon: 'match',     title: '配對遊戲',     desc: '找出正確的表情',         bg: '#BFD4E8', edge: '#7E9DBC', ghost: 'surprised' },
+  { id: 'scenario',  icon: 'scenario',  title: '情境猜猜看',   desc: '他現在是什麼心情？',     bg: '#D3CBE8', edge: '#9C8FC2', ghost: 'sad' },
+  { id: 'detective', icon: 'detective', title: '情緒小偵探',   desc: '找線索，猜心情有多強',   bg: '#E4D3BC', edge: '#B99A75', ghost: 'scared' },
+  { id: 'voice',     icon: 'voice',     title: '聲音裡的情緒', desc: '聽聽看他是什麼心情',     bg: '#E0D8EC', edge: '#9C8FC2', ghost: 'tired' },
+  { id: 'family',    icon: 'family',    title: '真人表情',     desc: '看看家人的表情',         bg: '#E8D7C3', edge: '#B99A75', ghost: 'sad' },
+  { id: 'mimic',     icon: 'mimic',     title: '表情模仿',     desc: '照著做做看',             bg: '#EFC7B6', edge: '#C68E75', ghost: 'angry' },
+  { id: 'journal',   icon: 'journal',   title: '今天的心情',   desc: '說說今天發生的事',       bg: '#C4DCBC', edge: '#86AB7C', ghost: 'shy' },
+  { id: 'calm',      icon: 'calm',      title: '冷靜角',       desc: '心情太大的時候來這裡',   bg: '#DCE4DA', edge: '#93A88C', ghost: 'happy' },
+  { id: 'rewards',   icon: 'rewards',   title: '我的貼紙簿',   desc: '看看收集到的貼紙',       bg: '#EFC9D6', edge: '#C48EA3', ghost: 'happy' },
 ]
 
 export default function Home({ go }) {
@@ -64,7 +65,7 @@ export default function Home({ go }) {
               size={128}
               className="pointer-events-none absolute -right-9 -bottom-10 opacity-[0.28] rotate-[8deg]"
             />
-            <span className="relative text-5xl md:text-6xl" aria-hidden="true">{m.icon}</span>
+            <Icon name={m.icon} size={56} color={m.edge} tint={m.bg} className="relative" />
             <span className="relative text-xl md:text-2xl font-display font-bold">{m.title}</span>
             <span className="relative text-sm text-ink/70 hidden md:block">{m.desc}</span>
           </button>
@@ -73,7 +74,7 @@ export default function Home({ go }) {
 
       <footer className="pt-4 flex justify-center">
         <HoldToEnter onDone={() => go('parent')} className="text-inkSoft">
-          👨‍👩‍👧 長按 2 秒進入家長設定
+          <span className="inline-flex items-center gap-1"><Icon name="family" size={20} />長按 2 秒進入家長設定</span>
         </HoldToEnter>
       </footer>
     </div>

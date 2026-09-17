@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Screen, SpeakButton, BigButton, HoldToEnter } from '../components/UI'
+import Icon from '../components/Icon'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
 import { activeEmotions } from '../data/emotions'
@@ -48,9 +49,9 @@ export default function Mimic({ go }) {
 
   const steps = useMemo(
     () => [
-      { icon: '〰️', label: '眉毛', text: BROW_STEP[target.face.brow] || '眉毛放輕鬆' },
-      { icon: '👀', label: '眼睛', text: EYE_STEP[target.face.eye] || '眼睛張開看前面' },
-      { icon: '👄', label: '嘴巴', text: MOUTH_STEP[target.face.mouth] || '嘴巴放鬆' },
+      { icon: 'brow', label: '眉毛', text: BROW_STEP[target.face.brow] || '眉毛放輕鬆' },
+      { icon: 'eye', label: '眼睛', text: EYE_STEP[target.face.eye] || '眼睛張開看前面' },
+      { icon: 'mouth', label: '嘴巴', text: MOUTH_STEP[target.face.mouth] || '嘴巴放鬆' },
     ],
     [target],
   )
@@ -87,14 +88,14 @@ export default function Mimic({ go }) {
       <div className="flex-1 flex flex-col items-center justify-center gap-4">
         {cheer ? (
           <div className="flex flex-col items-center gap-4 animate-popIn text-center">
-            <div className="text-7xl" aria-hidden="true">🌟</div>
+            <Icon name="star" size={72} color="#D8AE57" />
             <h2 className="text-4xl font-bold">你做到了！</h2>
             <EmotionFace emotion={target} size={190} animate />
             <p className="text-2xl text-inkSoft">拿到 1 顆星星</p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <BigButton onClick={another} color="#6FC2C0">🔁 換一個表情</BigButton>
-              <BigButton onClick={() => go('rewards')} color="#A99BD4">🎁 貼紙簿</BigButton>
-              <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+              <BigButton onClick={another} color="#6FC2C0"><Icon name="again" size={26} />換一個表情</BigButton>
+              <BigButton onClick={() => go('rewards')} color="#A99BD4"><Icon name="rewards" size={26} />貼紙簿</BigButton>
+              <BigButton onClick={() => go('home')} color="#F3C14F"><Icon name="home" size={26} />回家</BigButton>
             </div>
           </div>
         ) : (
@@ -123,22 +124,22 @@ export default function Mimic({ go }) {
                   }`}
                   style={{ borderColor: target.color, '--edge': target.color, '--tw-ring-color': `${target.color}66` }}
                 >
-                  <span className="text-3xl" aria-hidden="true">{s.icon}</span>
+                  <Icon name={s.icon} size={30} />
                   <span className="text-sm text-inkSoft">{s.label}</span>
                   <span className="text-lg md:text-xl font-bold leading-snug">{s.text}</span>
                 </button>
               ))}
             </div>
 
-            <p className="text-lg text-inkSoft text-center max-w-xl">
-              🪞 可以拿鏡子照照看，或是跟旁邊的大人面對面一起做。
+            <p className="text-lg text-inkSoft text-center max-w-xl flex items-center justify-center gap-1">
+              <Icon name="mirror" size={22} className="shrink-0" />可以拿鏡子照照看，或是跟旁邊的大人面對面一起做。
             </p>
 
             <div className="flex flex-wrap gap-3 justify-center items-center">
               <HoldToEnter onDone={succeed} seconds={1.2} className="text-2xl font-bold" >
-                ✅ 做到了！（長按）
+                <span className="inline-flex items-center gap-1"><Icon name="check" size={24} />做到了！（長按）</span>
               </HoldToEnter>
-              <BigButton onClick={another} color="#B7AFA4" className="text-xl">🔁 換一個</BigButton>
+              <BigButton onClick={another} color="#B7AFA4" className="text-xl"><Icon name="again" size={22} />換一個</BigButton>
             </div>
           </>
         )}

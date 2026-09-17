@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
@@ -81,7 +82,7 @@ export default function VoiceEmotion({ go }) {
     return (
       <Screen title="聲音裡的情緒" onBack={() => go('home')}>
         <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center max-w-xl mx-auto">
-          <div className="text-7xl" aria-hidden="true">🔇</div>
+          <Icon name="mute" size={72} color="#B7AFA4" tint="#EEEAE4" />
           <h2 className="text-3xl font-display font-bold">這個遊戲需要語音</h2>
           <p className="text-xl text-inkSoft leading-relaxed">
             {!speechSupported()
@@ -90,7 +91,7 @@ export default function VoiceEmotion({ go }) {
                 ? '請到家長設定把「語音朗讀」打開。'
                 : '目前開放的情緒不夠，請到家長設定調整。'}
           </p>
-          <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+          <BigButton onClick={() => go('home')} color="#F3C14F"><Icon name="home" size={26} />回家</BigButton>
         </div>
       </Screen>
     )
@@ -127,7 +128,7 @@ export default function VoiceEmotion({ go }) {
           className="tap card w-[150px] h-[150px] flex flex-col items-center justify-center gap-1"
           style={{ '--edge': '#9C8FC2', backgroundColor: '#EDE7F6' }}
         >
-          <span className="text-6xl" aria-hidden="true">🔊</span>
+          <Icon name="speaker" size={56} color="#9C8FC2" />
           <span className="text-lg text-ink/70">再聽一次</span>
         </button>
         <p className="text-lg text-inkSoft">已經聽了 {plays} 次・想聽幾次都可以</p>
@@ -160,16 +161,16 @@ export default function VoiceEmotion({ go }) {
 
         {solved ? (
           <div className="flex flex-col items-center gap-3 animate-popIn">
-            <div className="card p-4 max-w-2xl text-xl md:text-2xl leading-relaxed"
+            <div className="card p-4 max-w-2xl text-xl md:text-2xl leading-relaxed flex items-center gap-2"
               style={{ '--edge': answer.color }}>
-              👂 {TONE_CLUE[answer.id]}
+              <Icon name="ear" size={28} className="shrink-0" />{TONE_CLUE[answer.id]}
             </div>
             <BigButton onClick={next} color="#93C08A">
-              {qi + 1 >= len ? '看看拿到幾顆星星 ⭐' : '下一題 ▶'}
+              {qi + 1 >= len ? <>看看拿到幾顆星星<Icon name="star" size={26} color="#D8AE57" /></> : '下一題 ▶'}
             </BigButton>
           </div>
         ) : (
-          wrong.length > 0 && <p className="text-xl text-inkSoft">沒關係，再聽一次看看 👂</p>
+          wrong.length > 0 && <p className="text-xl text-inkSoft flex items-center justify-center gap-1">沒關係，再聽一次看看<Icon name="ear" size={20} /></p>
         )}
       </div>
     </Screen>

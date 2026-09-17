@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, SpeakButton } from '../components/UI'
+import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
@@ -127,14 +128,14 @@ export default function MatchGame({ go }) {
                     <Ruby text={c.name} zhuyin={c.zhuyin} show={settings.zhuyin} />
                   </span>
                 )}
-                {isRight && <span className="text-4xl" aria-hidden="true">✅</span>}
+                {isRight && <Icon name="check" size={36} color="#5FAE86" />}
               </button>
             )
           })}
         </div>
 
         {wrong.length > 0 && !solved && (
-          <p className="text-xl text-inkSoft">沒關係，再試一次 👍</p>
+          <p className="text-xl text-inkSoft flex items-center justify-center gap-1">沒關係，再試一次<Icon name="thumbsUp" size={20} /></p>
         )}
       </div>
     </Screen>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Screen, SpeakButton, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
 import { activeEmotions, getEmotion } from '../data/emotions'
@@ -15,14 +16,14 @@ export const todayStr = (d = new Date()) => {
 
 // 常見事件模板：孩子還不會打字，用點的最快；大人也可以直接輸入
 const EVENT_CHIPS = [
-  { icon: '🏫', text: '在學校的時候' },
-  { icon: '🧸', text: '在玩玩具的時候' },
-  { icon: '👫', text: '跟朋友一起玩' },
-  { icon: '🍚', text: '吃飯的時候' },
-  { icon: '🛝', text: '去公園玩' },
-  { icon: '📺', text: '看電視的時候' },
-  { icon: '🛏️', text: '要睡覺的時候' },
-  { icon: '🚗', text: '出門坐車的時候' },
+  { icon: 'school', text: '在學校的時候' },
+  { icon: 'toy', text: '在玩玩具的時候' },
+  { icon: 'friends', text: '跟朋友一起玩' },
+  { icon: 'meal', text: '吃飯的時候' },
+  { icon: 'playground', text: '去公園玩' },
+  { icon: 'tv', text: '看電視的時候' },
+  { icon: 'bed', text: '要睡覺的時候' },
+  { icon: 'car', text: '出門坐車的時候' },
 ]
 
 export const INTENSITY = [
@@ -66,7 +67,7 @@ export default function Journal({ go }) {
 
   if (showLog) {
     return (
-      <Screen title="心情回顧" onBack={() => setShowLog(false)} backIcon="◀" backLabel="返回">
+      <Screen title="心情回顧" onBack={() => setShowLog(false)} backIcon="back" backLabel="返回">
         <div className="flex-1 overflow-y-auto space-y-3 max-w-3xl w-full mx-auto">
           {state.journal.length === 0 && (
             <p className="text-center text-xl text-inkSoft py-10">還沒有紀錄，先去記一次今天的心情吧！</p>
@@ -90,9 +91,9 @@ export default function Journal({ go }) {
                   type="button"
                   aria-label="刪除這筆紀錄"
                   onClick={() => removeJournal(j.id)}
-                  className="tap w-[56px] h-[56px] min-w-0 min-h-0 text-2xl text-inkSoft"
+                  className="tap w-[56px] h-[56px] min-w-0 min-h-0 text-inkSoft flex items-center justify-center"
                 >
-                  🗑️
+                  <Icon name="trash" size={26} />
                 </button>
               </div>
             )
@@ -108,8 +109,8 @@ export default function Journal({ go }) {
       onBack={() => go('home')}
       right={
         <button type="button" onClick={() => setShowLog(true)}
-          className="tap card w-[72px] h-[72px] min-w-0 min-h-0 text-3xl flex items-center justify-center" aria-label="看以前的紀錄">
-          📖
+          className="tap card w-[72px] h-[72px] min-w-0 min-h-0 flex items-center justify-center" aria-label="看以前的紀錄">
+          <Icon name="journal" size={32} />
         </button>
       }
     >
@@ -129,7 +130,7 @@ export default function Journal({ go }) {
                   onClick={() => { sfx.tap(settings); setEvent(c.text); speak(c.text, settings) }}
                   className={`tap card p-3 flex flex-col items-center gap-1 ${event === c.text ? 'ring-4 ring-calm/50' : ''}`}
                 >
-                  <span className="text-4xl" aria-hidden="true">{c.icon}</span>
+                  <Icon name={c.icon} size={40} />
                   <span className="text-lg font-bold text-center leading-snug">{c.text}</span>
                 </button>
               ))}
@@ -250,7 +251,7 @@ export default function Journal({ go }) {
               <button type="button" onClick={() => setStep(1)} className="text-inkSoft text-lg underline">◀ 回上一步</button>
               <BigButton onClick={finish} color="#93C08A" disabled={!intensity}
                 className={!intensity ? 'opacity-40 pointer-events-none' : ''}>
-                ✅ 記下來
+<Icon name="check" size={26} />記下來
               </BigButton>
             </div>
           </div>
@@ -259,7 +260,7 @@ export default function Journal({ go }) {
         {/* 步驟 4：完成 */}
         {step === 3 && emotion && (
           <div className="flex flex-col items-center gap-4 text-center animate-popIn">
-            <div className="text-6xl" aria-hidden="true">📔</div>
+            <Icon name="journal" size={60} color="#7FA9D4" tint="#E3EEF7" />
             <h2 className="text-3xl font-bold">記好了！</h2>
             <div className="card p-5 flex items-center gap-4 max-w-2xl">
               <EmotionFace emotion={emotion} size={110} animate />
@@ -273,13 +274,13 @@ export default function Journal({ go }) {
               </div>
             </div>
             <div className="card p-4 max-w-2xl text-xl leading-relaxed flex items-center gap-3">
-              <p className="flex-1">💡 {emotion.cope}</p>
+              <p className="flex-1 flex items-start gap-1"><Icon name="idea" size={22} className="shrink-0 mt-0.5" />{emotion.cope}</p>
               <SpeakButton text={emotion.cope} className="w-[56px] h-[56px] min-w-0 min-h-0 text-2xl shrink-0" />
             </div>
             {intensity >= 4 && (
               <div className="card p-4 max-w-2xl w-full flex items-center gap-4 animate-popIn"
                 style={{ '--edge': '#93A88C', backgroundColor: '#EAF1E8' }}>
-                <span className="text-5xl shrink-0" aria-hidden="true">🌿</span>
+                <Icon name="calm" size={48} color="#5FAE86" tint="#DFF0E4" className="shrink-0" />
                 <p className="flex-1 text-xl text-left">
                   這個「{emotion.name}」有點大。要不要先去冷靜角做一件事？
                 </p>
@@ -294,9 +295,9 @@ export default function Journal({ go }) {
             )}
 
             <div className="flex flex-wrap gap-3 justify-center">
-              <BigButton onClick={reset} color="#6FC2C0">➕ 再記一件事</BigButton>
-              <BigButton onClick={() => setShowLog(true)} color="#7FA9D4">📖 看回顧</BigButton>
-              <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+              <BigButton onClick={reset} color="#6FC2C0"><Icon name="plus" size={26} />再記一件事</BigButton>
+              <BigButton onClick={() => setShowLog(true)} color="#7FA9D4"><Icon name="journal" size={26} />看回顧</BigButton>
+              <BigButton onClick={() => go('home')} color="#F3C14F"><Icon name="home" size={26} />回家</BigButton>
             </div>
           </div>
         )}

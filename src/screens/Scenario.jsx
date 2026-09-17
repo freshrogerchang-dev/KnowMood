@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, SpeakButton, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
@@ -103,7 +104,7 @@ export default function Scenario({ go }) {
               <SpeakButton text={q.because} className="w-[56px] h-[56px] min-w-0 min-h-0 text-2xl shrink-0" />
             </div>
             <BigButton onClick={next} color="#93C08A">
-              {qi + 1 >= len ? '看看拿到幾顆星星 ⭐' : '下一題 ▶'}
+              {qi + 1 >= len ? <>看看拿到幾顆星星<Icon name="star" size={26} color="#D8AE57" /></> : '下一題 ▶'}
             </BigButton>
           </div>
         ) : (
@@ -132,7 +133,7 @@ export default function Scenario({ go }) {
           </div>
         )}
 
-        {wrong.length > 0 && !solved && <p className="text-xl text-inkSoft">沒關係，再想想看 👍</p>}
+        {wrong.length > 0 && !solved && <p className="text-xl text-inkSoft flex items-center justify-center gap-1">沒關係，再想想看<Icon name="thumbsUp" size={20} /></p>}
       </div>
     </Screen>
   )

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, SpeakButton, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
@@ -119,7 +120,7 @@ export default function Detective({ go }) {
             {q.icon}
           </span>
           <div className="flex-1 min-w-0">
-            <p className="text-lg text-inkSoft">🔍 {q.title}</p>
+            <p className="text-lg text-inkSoft flex items-center gap-1"><Icon name="detective" size={20} />{q.title}</p>
             {phase === 'emotion' ? (
               <p className="text-xl md:text-2xl leading-relaxed mt-1">{q.story}</p>
             ) : (
@@ -158,7 +159,7 @@ export default function Detective({ go }) {
                 )
               })}
             </div>
-            {wrong.length > 0 && <p className="text-xl text-inkSoft">沒關係，再看一次故事 🔍</p>}
+            {wrong.length > 0 && <p className="text-xl text-inkSoft flex items-center justify-center gap-1">沒關係，再看一次故事<Icon name="detective" size={20} /></p>}
           </>
         )}
 
@@ -192,7 +193,7 @@ export default function Detective({ go }) {
             </div>
             <BigButton onClick={reveal} color="#93C08A" mute
               className={intensity ? '' : 'opacity-40 pointer-events-none'}>
-              🔍 公布線索
+              <Icon name="detective" size={26} />公布線索
             </BigButton>
           </>
         )}
@@ -208,17 +209,17 @@ export default function Detective({ go }) {
                 </p>
                 <p className="text-xl text-inkSoft">
                   你猜 {intensity} 分・大部分的人 {q.band[0]}–{q.band[1]} 分
-                  {inBand && <span className="ml-2">⭐ +1</span>}
+                  {inBand && <span className="ml-2 inline-flex items-center gap-0.5"><Icon name="star" size={18} color="#D8AE57" />+1</span>}
                 </p>
               </div>
             </div>
 
             <div className="card w-full p-4" style={{ '--edge': answer.color }}>
-              <p className="text-xl font-bold mb-2">🔍 你找到的線索</p>
+              <p className="text-xl font-bold mb-2 flex items-center gap-1"><Icon name="detective" size={22} />你找到的線索</p>
               <ul className="space-y-1">
                 {q.clues.map((c) => (
                   <li key={c} className="text-xl flex items-start gap-2">
-                    <span aria-hidden="true">✓</span><span>{c}</span>
+                    <Icon name="check" size={20} color="#5FAE86" className="shrink-0 mt-1" /><span>{c}</span>
                   </li>
                 ))}
               </ul>
@@ -226,7 +227,7 @@ export default function Detective({ go }) {
             </div>
 
             <BigButton onClick={next} color="#93C08A">
-              {qi + 1 >= len ? '看看拿到幾顆星星 ⭐' : '下一個故事 ▶'}
+              {qi + 1 >= len ? <>看看拿到幾顆星星<Icon name="star" size={26} color="#D8AE57" /></> : '下一個故事 ▶'}
             </BigButton>
           </div>
         )}

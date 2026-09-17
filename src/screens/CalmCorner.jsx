@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Screen, BigButton, SpeakButton } from '../components/UI'
+import Icon from '../components/Icon'
 import EmotionFace from '../components/EmotionFace'
 import { getEmotion } from '../data/emotions'
 import { CALM_TOOLS } from '../data/calmTools'
@@ -160,7 +161,7 @@ export default function CalmCorner({ go, params }) {
                 </button>
               ))}
             </div>
-            <BigButton onClick={() => go('home')} color="#B7AFA4" className="text-xl">🏠 不用了，回家</BigButton>
+            <BigButton onClick={() => go('home')} color="#B7AFA4" className="text-xl"><Icon name="home" size={24} />不用了，回家</BigButton>
           </>
         )}
 
@@ -194,7 +195,7 @@ export default function CalmCorner({ go, params }) {
               {tool.counting ? `數到 ${count}` : step?.label}
             </p>
             {tool.hold && stepIdx === 0 && !holding && (
-              <p className="text-2xl text-inkSoft">👆 按住上面的球不要放</p>
+              <p className="text-2xl text-inkSoft">按住上面的球不要放</p>
             )}
             {!tool.counting && (
               <p className="text-xl text-inkSoft">第 {round} 次／共 {tool.rounds} 次</p>
@@ -209,7 +210,7 @@ export default function CalmCorner({ go, params }) {
         {/* 做完了 */}
         {finished && (
           <div className="flex flex-col items-center gap-4 text-center animate-popIn w-full">
-            <div className="text-7xl" aria-hidden="true">🌿</div>
+            <Icon name="calm" size={72} color="#5FAE86" tint="#DFF0E4" />
             <h2 className="text-4xl font-display font-bold">做得很好！</h2>
 
             {/* 從日記進來的話，問問看現在幾分 —— 這是整個功能最有價值的一筆資料 */}
@@ -247,7 +248,7 @@ export default function CalmCorner({ go, params }) {
                 {after < params.intensity ? (
                   <p>
                     從 <b>{params.intensity}</b> 分變成 <b>{after}</b> 分了，
-                    「{tool?.name}」對你有用！🌟
+                    「{tool?.name}」對你有用！<Icon name="star" size={22} color="#D8AE57" className="inline align-text-bottom" />
                   </p>
                 ) : after === params.intensity ? (
                   <p>還是 <b>{after}</b> 分。沒關係，有時候需要多做幾次，或換一個方法試試。</p>
@@ -259,8 +260,8 @@ export default function CalmCorner({ go, params }) {
             )}
 
             <div className="flex flex-wrap gap-3 justify-center">
-              <BigButton onClick={reset} color="#6FC2C0">🔁 再做一次</BigButton>
-              <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+              <BigButton onClick={reset} color="#6FC2C0"><Icon name="again" size={26} />再做一次</BigButton>
+              <BigButton onClick={() => go('home')} color="#F3C14F"><Icon name="home" size={26} />回家</BigButton>
             </div>
           </div>
         )}

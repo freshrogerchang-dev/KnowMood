@@ -3,6 +3,7 @@ import { useApp } from '../lib/store'
 import { speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 import { BigButton } from './UI'
+import Icon from './Icon'
 import { nextSticker } from '../data/stickers'
 
 /** 一輪結束：只講做到了什麼，不強調答錯幾題 */
@@ -18,10 +19,10 @@ export default function RoundEnd({ earned, total, onAgain, onHome, onRewards }) 
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-5 text-center animate-popIn">
-      <div className="text-7xl" aria-hidden="true">🎉</div>
+      <Icon name="celebrate" size={72} color="#E8A33D" tint="#FBEFCF" />
       <h2 className="text-4xl font-bold">你完成了！</h2>
       <div className="flex items-center gap-2 text-5xl font-bold">
-        <span aria-hidden="true">⭐</span>
+        <Icon name="star" size={44} color="#D8AE57" />
         <span className="tabular-nums">+{earned}</span>
       </div>
       <p className="text-xl text-inkSoft">
@@ -35,9 +36,9 @@ export default function RoundEnd({ earned, total, onAgain, onHome, onRewards }) 
         </p>
       )}
       <div className="flex flex-wrap gap-3 justify-center">
-        <BigButton onClick={onAgain} color="#93C08A">🔁 再玩一次</BigButton>
-        {onRewards && <BigButton onClick={onRewards} color="#A99BD4">🎁 貼紙簿</BigButton>}
-        <BigButton onClick={onHome} color="#F3C14F">🏠 回家</BigButton>
+        <BigButton onClick={onAgain} color="#93C08A"><Icon name="again" size={28} />再玩一次</BigButton>
+        {onRewards && <BigButton onClick={onRewards} color="#A99BD4"><Icon name="rewards" size={28} />貼紙簿</BigButton>}
+        <BigButton onClick={onHome} color="#F3C14F"><Icon name="home" size={28} />回家</BigButton>
       </div>
     </div>
   )

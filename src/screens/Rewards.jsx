@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Screen, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import { STICKERS, nextSticker } from '../data/stickers'
 import { useApp } from '../lib/store'
 import { speak } from '../lib/speech'
@@ -37,12 +38,12 @@ export default function Rewards({ go }) {
               <p className="text-2xl font-bold">得到新貼紙：{justGot.name}！</p>
               <p className="text-lg text-inkSoft">繼續玩遊戲就可以收集更多喔</p>
             </div>
-            <button type="button" onClick={() => setJustGot(null)} className="tap w-[56px] h-[56px] min-w-0 min-h-0 text-2xl" aria-label="關閉">✖️</button>
+            <button type="button" onClick={() => setJustGot(null)} className="tap w-[56px] h-[56px] min-w-0 min-h-0 flex items-center justify-center" aria-label="關閉"><Icon name="close" size={24} /></button>
           </div>
         )}
 
         <div className="flex items-center gap-3 text-4xl font-bold">
-          <span aria-hidden="true">⭐</span>
+          <Icon name="star" size={40} color="#D8AE57" />
           <span className="tabular-nums">{state.stars}</span>
           <span className="text-2xl text-inkSoft font-normal">顆星星</span>
         </div>
@@ -77,14 +78,20 @@ export default function Rewards({ go }) {
                 className={`card p-3 flex flex-col items-center gap-1 ${has ? '' : 'opacity-45'}`}
                 style={has ? { borderColor: '#F3C14F', '--edge': '#F3C14F'} : undefined}
               >
-                <span className="text-5xl" aria-hidden="true">{has ? s.icon : '❓'}</span>
-                <span className="text-base font-bold text-center">{has ? s.name : `${s.cost} ⭐`}</span>
+                {has ? (
+                  <span className="text-5xl" aria-hidden="true">{s.icon}</span>
+                ) : (
+                  <Icon name="question" size={44} />
+                )}
+                <span className="text-base font-bold text-center flex items-center gap-0.5">
+                  {has ? s.name : <>{s.cost}<Icon name="star" size={16} color="#D8AE57" /></>}
+                </span>
               </div>
             )
           })}
         </div>
 
-        <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+        <BigButton onClick={() => go('home')} color="#F3C14F"><Icon name="home" size={26} />回家</BigButton>
       </div>
     </Screen>
   )

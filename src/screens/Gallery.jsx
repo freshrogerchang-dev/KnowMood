@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Screen, SpeakButton } from '../components/UI'
+import Icon from '../components/Icon'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
 import { activeEmotions } from '../data/emotions'
@@ -9,12 +10,12 @@ import { speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 
 const BASE_TABS = [
-  { id: 'body', label: '身體訊號', icon: '👀', key: 'bodyClue' },
-  { id: 'say', label: '我可以說', icon: '💬', key: 'iSay' },
-  { id: 'do', label: '我可以做', icon: '🤝', key: 'cope' },
+  { id: 'body', label: '身體訊號', icon: 'eye', key: 'bodyClue' },
+  { id: 'say', label: '我可以說', icon: 'speech', key: 'iSay' },
+  { id: 'do', label: '我可以做', icon: 'thumbsUp', key: 'cope' },
 ]
 // 詞彙分頁：同一個情緒、由弱到強的不同說法
-const WORDS_TAB = { id: 'words', label: '還可以這樣說', icon: '🗣️' }
+const WORDS_TAB = { id: 'words', label: '還可以這樣說', icon: 'speech' }
 
 export default function Gallery({ go }) {
   const { settings } = useApp()
@@ -84,14 +85,14 @@ export default function Gallery({ go }) {
                 }`}
                 style={tab === t.id ? { borderColor: e.color, '--edge': e.color} : undefined}
               >
-                <span aria-hidden="true">{t.icon}</span>{t.label}
+                <Icon name={t.icon} size={22} />{t.label}
               </button>
             ))}
           </div>
           {activeTab.id === 'words' ? (
             <div className="card p-4">
               <p className="text-lg text-inkSoft mb-3 text-center">
-                同樣是「{e.name}」，從一點點到非常多，可以這樣說 👇
+                同樣是「{e.name}」，從一點點到非常多，可以這樣說
               </p>
               {/* 手風琴：預設只顯示詞，點了才展開「什麼時候用」——
                   一次只開一個，整張清單才不會又變長。 */}
@@ -133,7 +134,7 @@ export default function Gallery({ go }) {
                           <Ruby text={w.word} zhuyin={w.zhuyin} show={settings.zhuyin} />
                         </span>
                         <span className="flex-1" />
-                        <span className="text-2xl shrink-0" aria-hidden="true">🔊</span>
+                        <Icon name="speaker" size={26} className="shrink-0" />
                         <span
                           className="text-xl shrink-0 transition-transform"
                           style={{ transform: isOpen ? 'rotate(90deg)' : 'none', color: e.color }}

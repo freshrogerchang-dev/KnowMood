@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Screen } from '../components/UI'
+import Icon from '../components/Icon'
 import EmotionFace from '../components/EmotionFace'
 import { EMOTIONS, getEmotion } from '../data/emotions'
 import { useApp } from '../lib/store'
@@ -205,7 +206,7 @@ export default function ParentSettings({ go }) {
             onClick={() => setShowFamily(true)}
             className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg w-full text-left flex items-center justify-between"
           >
-            <span>📷 管理家人表情相簿</span>
+            <span className="flex items-center gap-1"><Icon name="camera" size={22} />管理家人表情相簿</span>
             <span className="text-inkSoft">▶</span>
           </button>
         </Section>
@@ -224,15 +225,16 @@ export default function ParentSettings({ go }) {
               <button
                 type="button"
                 onClick={() => speak('哈囉，我是這台裝置念故事給你聽的聲音。', settings)}
-                className="px-4 py-2 rounded-xl border-2 border-line bg-paper text-base"
+                className="px-4 py-2 rounded-xl border-2 border-line bg-paper text-base flex items-center gap-1"
               >
-                🔊 試聽
+                <Icon name="speaker" size={20} />試聽
               </button>
             </div>
           )}
           {settings.speech !== false && !/google|enhanced|premium|neural|natural/i.test(voiceLabel || '') && (
-            <p className="text-sm text-inkSoft">
-              💡 iPad／iPhone 上通常已經是最好的內建語音；如果是舊款 Android 或電腦聽起來很生硬，
+            <p className="text-sm text-inkSoft flex items-start gap-1">
+              <Icon name="idea" size={18} className="shrink-0 mt-0.5" />
+              iPad／iPhone 上通常已經是最好的內建語音；如果是舊款 Android 或電腦聽起來很生硬，
               可以到系統設定安裝「Google 文字轉語音」或更新裝置的中文語音包，聲音會自然很多。
             </p>
           )}
@@ -341,8 +343,8 @@ export default function ParentSettings({ go }) {
                     </span>
                     <span className="flex-1 truncate">{j.event}</span>
                     {j.afterIntensity != null && (
-                      <span className="shrink-0 text-base text-calm">
-                        🌿 {j.intensity}→{j.afterIntensity}
+                      <span className="shrink-0 text-base text-calm flex items-center gap-0.5">
+                        <Icon name="calm" size={16} color="currentColor" />{j.intensity}→{j.afterIntensity}
                       </span>
                     )}
                   </div>
@@ -364,12 +366,12 @@ export default function ParentSettings({ go }) {
           </p>
           <div className="flex flex-wrap gap-2">
             {cloud && (
-              <button type="button" onClick={syncNow} className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg">
-                ☁️ 立即同步
+              <button type="button" onClick={syncNow} className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg flex items-center gap-1">
+                <Icon name="cloud" size={22} />立即同步
               </button>
             )}
-            <button type="button" onClick={download} className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg">
-              ⬇️ 匯出紀錄 (JSON)
+            <button type="button" onClick={download} className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg flex items-center gap-1">
+              <Icon name="download" size={22} />匯出紀錄 (JSON)
             </button>
             {confirmReset ? (
               <>
@@ -382,8 +384,8 @@ export default function ParentSettings({ go }) {
               </>
             ) : (
               <button type="button" onClick={() => setConfirmReset(true)}
-                className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg text-inkSoft">
-                🗑️ 清除所有紀錄
+                className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg text-inkSoft flex items-center gap-1">
+                <Icon name="trash" size={22} />清除所有紀錄
               </button>
             )}
           </div>

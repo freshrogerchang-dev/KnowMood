@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../lib/store'
 import { speak, stopSpeaking } from '../lib/speech'
 import { sfx } from '../lib/sound'
+import Icon from './Icon'
 
 /** 大按鈕：至少 88px，按下去會往下沉一點，給明確的觸覺回饋 */
 export function BigButton({ children, onClick, className = '', color = '#F3C14F', mute = false, ...rest }) {
@@ -31,9 +32,9 @@ export function SpeakButton({ text, className = '', label = '再聽一次' }) {
       type="button"
       aria-label={label}
       onClick={() => speak(text, settings)}
-      className={`tap card w-[88px] h-[88px] text-4xl flex items-center justify-center ${className}`}
+      className={`tap card w-[88px] h-[88px] flex items-center justify-center ${className}`}
     >
-      🔊
+      <Icon name="speaker" size={40} />
     </button>
   )
 }
@@ -46,14 +47,14 @@ export function StarBadge({ className = '' }) {
       style={{ '--edge': '#D8AE57', backgroundColor: '#FBEFCF' }}
       aria-label={`星星 ${state.stars} 顆`}
     >
-      <span aria-hidden="true">⭐</span>
+      <Icon name="star" size={26} color="#D8AE57" />
       <span className="tabular-nums">{state.stars}</span>
     </div>
   )
 }
 
 /** 每個畫面共用的外框：左上角一律是「回家」，位置固定不會變 */
-export function Screen({ title, onBack, right, children, bg = 'bg-cream', backIcon = '🏠', backLabel = '回到主畫面' }) {
+export function Screen({ title, onBack, right, children, bg = 'bg-cream', backIcon = 'home', backLabel = '回到主畫面' }) {
   useEffect(() => () => stopSpeaking(), [])
   return (
     <div className={`min-h-[100dvh] flex flex-col ${bg}`}>
@@ -63,9 +64,9 @@ export function Screen({ title, onBack, right, children, bg = 'bg-cream', backIc
             type="button"
             onClick={onBack}
             aria-label={backLabel}
-            className="tap card w-[72px] h-[72px] min-w-0 min-h-0 text-3xl flex items-center justify-center"
+            className="tap card w-[72px] h-[72px] min-w-0 min-h-0 flex items-center justify-center"
           >
-            {backIcon}
+            <Icon name={backIcon} size={32} />
           </button>
         ) : (
           <span className="w-[72px]" />

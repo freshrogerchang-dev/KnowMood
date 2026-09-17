@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { Screen, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import EmotionFace from '../components/EmotionFace'
 import FamilyPhoto from '../components/FamilyPhoto'
 import { EMOTIONS } from '../data/emotions'
@@ -51,10 +52,10 @@ export default function FamilySetup({ onBack }) {
   }
 
   return (
-    <Screen title="家人表情相簿" onBack={onBack} backIcon="◀" backLabel="返回">
+    <Screen title="家人表情相簿" onBack={onBack} backIcon="back" backLabel="返回">
       <div className="flex-1 overflow-y-auto space-y-4 max-w-3xl w-full mx-auto pb-8">
         <div className="card p-4" style={{ '--edge': '#93A88C', backgroundColor: '#EAF1E8' }}>
-          <p className="text-lg font-bold mb-1">🔒 這些照片只存在這台裝置上</p>
+          <p className="text-lg font-bold mb-1 flex items-center gap-1"><Icon name="lock" size={22} />這些照片只存在這台裝置上</p>
           <p className="text-base leading-relaxed">
             不會上傳、不會同步到雲端、不會傳給任何人 —— 就算你開了雲端同步，
             這裡的照片也不會被送出去。孩子已經認得情緒的臉譜（開心、難過⋯）之後，
@@ -63,8 +64,8 @@ export default function FamilySetup({ onBack }) {
         </div>
 
         {error && (
-          <div className="card p-3 text-lg" style={{ '--edge': '#E08A6E', backgroundColor: '#FAE7E0' }}>
-            ⚠️ {error}
+          <div className="card p-3 text-lg flex items-center gap-1" style={{ '--edge': '#E08A6E', backgroundColor: '#FAE7E0' }}>
+            <Icon name="warning" size={22} color="#C56A4A" />{error}
           </div>
         )}
 
@@ -93,7 +94,7 @@ export default function FamilySetup({ onBack }) {
               className="flex-1 card p-3 text-xl"
             />
             <BigButton onClick={submitAdd} color="#93C08A" className="text-lg shrink-0" mute>
-              ➕ 新增
+              <Icon name="plus" size={22} />新增
             </BigButton>
           </div>
         </section>
@@ -129,9 +130,9 @@ export default function FamilySetup({ onBack }) {
                     type="button"
                     onClick={() => setConfirmDelete(m.id)}
                     aria-label={`刪除${m.name}`}
-                    className="text-inkSoft text-2xl px-2"
+                    className="text-inkSoft px-2"
                   >
-                    🗑️
+                    <Icon name="trash" size={26} />
                   </button>
                 )}
               </div>
@@ -159,7 +160,7 @@ export default function FamilySetup({ onBack }) {
                             className="tap min-h-0 min-w-0 w-full h-full flex flex-col items-center justify-center gap-1"
                           >
                             <EmotionFace emotion={e} size={32} className="opacity-40" />
-                            <span className="text-2xl" aria-hidden="true">📷</span>
+                            <Icon name="camera" size={26} />
                           </button>
                         )}
                       </div>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, BigButton } from '../components/UI'
+import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import FamilyPhoto from '../components/FamilyPhoto'
@@ -56,7 +57,7 @@ function DemoRound({ pool, settings, onExit }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-4 py-2 w-full max-w-4xl mx-auto animate-popIn">
       <div className="card px-4 py-2" style={{ '--edge': '#B99A75', backgroundColor: '#F3ECE0' }}>
-        <p className="text-lg font-bold">🎬 示範畫面・不是真的照片</p>
+        <p className="text-lg font-bold flex items-center gap-1"><Icon name="demo" size={22} />示範畫面・不是真的照片</p>
       </div>
 
       <div className="flex flex-col items-center gap-2">
@@ -102,7 +103,7 @@ function DemoRound({ pool, settings, onExit }) {
           <p className="text-xl text-center max-w-lg text-inkSoft">
             真正玩的時候，這裡會換成家人真實的照片，答案選項不會變。
           </p>
-          <BigButton onClick={onExit} color="#F3C14F">🏠 回家</BigButton>
+          <BigButton onClick={onExit} color="#F3C14F"><Icon name="home" size={26} />回家</BigButton>
         </div>
       )}
     </div>
@@ -191,15 +192,15 @@ export default function FamilyFaces({ go }) {
     return (
       <Screen title="真人表情" onBack={() => go('home')}>
         <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center max-w-xl mx-auto">
-          <div className="text-7xl" aria-hidden="true">👪</div>
+          <Icon name="family" size={72} color="#9C8FC2" tint="#EFEAF7" />
           <h2 className="text-3xl font-display font-bold">還沒有家人的照片</h2>
           <p className="text-xl text-inkSoft leading-relaxed">
             請大人到「家長設定 → 真人表情 → 管理家人表情相簿」，
             拍幾張家人做出不同表情的照片，就可以在這裡練習囉。
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <BigButton onClick={() => setDemo(true)} color="#9C8FC2">🎬 看示範怎麼玩</BigButton>
-            <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+            <BigButton onClick={() => setDemo(true)} color="#9C8FC2"><Icon name="demo" size={26} />看示範怎麼玩</BigButton>
+            <BigButton onClick={() => go('home')} color="#F3C14F"><Icon name="home" size={26} />回家</BigButton>
           </div>
         </div>
       </Screen>
@@ -262,10 +263,10 @@ export default function FamilyFaces({ go }) {
 
         {solved ? (
           <BigButton onClick={next} color="#93C08A">
-            {qi + 1 >= round.length ? '看看拿到幾顆星星 ⭐' : '下一張照片 ▶'}
+            {qi + 1 >= round.length ? <>看看拿到幾顆星星<Icon name="star" size={26} color="#D8AE57" /></> : '下一張照片 ▶'}
           </BigButton>
         ) : (
-          wrong.length > 0 && <p className="text-xl text-inkSoft">沒關係，再看一次 👀</p>
+          wrong.length > 0 && <p className="text-xl text-inkSoft flex items-center justify-center gap-1">沒關係，再看一次<Icon name="eye" size={20} /></p>
         )}
       </div>
     </Screen>
