@@ -3,6 +3,7 @@ import Home from './screens/Home'
 import Gallery from './screens/Gallery'
 import MatchGame from './screens/MatchGame'
 import Scenario from './screens/Scenario'
+import CalmCorner from './screens/CalmCorner'
 import Detective from './screens/Detective'
 import WhereEmotion from './screens/WhereEmotion'
 import Mimic from './screens/Mimic'
@@ -17,6 +18,7 @@ const SCREENS = {
   gallery: Gallery,
   match: MatchGame,
   scenario: Scenario,
+  calm: CalmCorner,
   detective: Detective,
   where: WhereEmotion,
   mimic: Mimic,
@@ -27,6 +29,7 @@ const SCREENS = {
 
 export default function App() {
   const [screen, setScreen] = useState('home')
+  const [params, setParams] = useState(null)
   const { settings } = useApp()
 
   // iPad 上第一次發聲一定要由觸控觸發，開機就先掛好解鎖用的監聽
@@ -34,12 +37,14 @@ export default function App() {
     if (settings.speech !== false) installSpeechUnlock()
   }, [settings.speech])
 
-  const go = useCallback((name) => {
+  // 第二個參數讓畫面之間可以傳資料（例如日記把「什麼情緒、幾分」帶進冷靜角）
+  const go = useCallback((name, nextParams = null) => {
     stopSpeaking() // 換頁時把上一句唸到一半的話停掉
     setScreen(name)
+    setParams(nextParams)
     window.scrollTo(0, 0)
-    if (name === 'home') window.history.replaceState({ screen: 'home' }, '')
-    else window.history.pushState({ screen: name }, '')
+    if (name === 'home') window.history.replaceState({ screen: 'home', params: null }, '')
+    else window.history.pushState({ screen: name, params: nextParams }, '')
   }, [])
 
   // 平板／手機的返回手勢回到主畫面，而不是直接離開 App
@@ -48,6 +53,7 @@ export default function App() {
     const onPop = (e) => {
       stopSpeaking()
       setScreen(e.state?.screen || 'home')
+      setParams(e.state?.params || null)
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -56,7 +62,7 @@ export default function App() {
   const Current = SCREENS[screen] || Home
   return (
     <div className="min-h-[100dvh]">
-      <Current go={go} />
+      <Current go={go} params={params} />
     </div>
   )
 }

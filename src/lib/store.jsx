@@ -164,7 +164,8 @@ export function AppProvider({ children }) {
             settings: remoteNewer ? { ...DEFAULT_SETTINGS, ...(remote.settings || {}) } : prev.settings,
             journal: mergeById(prev.journal, journal.data, (r) => ({
               id: r.id, date: r.entry_date, event: r.event_text, emotionId: r.emotion_id,
-              intensity: r.intensity, note: r.note || '', word: r.word || '', ts: r.created_at,
+              intensity: r.intensity, note: r.note || '', word: r.word || '',
+              calmTool: r.calm_tool || '', afterIntensity: r.after_intensity ?? null, ts: r.created_at,
             })).sort((a, b) => (a.date < b.date ? 1 : -1)),
             attempts: mergeById(prev.attempts, attempts.data, (r) => ({
               id: r.id, ts: r.created_at, mode: r.mode, emotionId: r.emotion_id,
@@ -214,6 +215,22 @@ export function AppProvider({ children }) {
         })
         update((prev) => ({ ...prev, journal: [row, ...prev.journal] }))
         return row
+      },
+
+      // 冷靜角做完之後回頭補上「用了哪個工具、現在幾分」
+      updateJournal: async (id, patch) => {
+        update((prev) => ({
+          ...prev,
+          journal: prev.journal.map((j) => (j.id === id ? { ...j, ...patch } : j)),
+        }))
+        if (isCloudEnabled) {
+          try {
+            await supabase.from('knowmood_journal').update({
+              calm_tool: patch.calmTool ?? null,
+              after_intensity: patch.afterIntensity ?? null,
+            }).eq('id', id)
+          } catch { /* 下次同步再說 */ }
+        }
       },
 
       removeJournal: async (id) => {

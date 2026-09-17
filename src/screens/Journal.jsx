@@ -43,6 +43,7 @@ export default function Journal({ go }) {
   const [intensity, setIntensity] = useState(null)
   const [word, setWord] = useState(null)   // 更精準的說法（選填）
   const [showLog, setShowLog] = useState(false)
+  const [savedId, setSavedId] = useState(null)   // 剛存下的那筆，冷靜角做完要寫回去
 
   const emotion = emotionId ? getEmotion(emotionId) : null
   // 符合這個強度的說法，最多給 3 個 —— 選項太多對 5 歲反而是負擔
@@ -51,11 +52,12 @@ export default function Journal({ go }) {
     [emotionId, intensity],
   )
 
-  const reset = () => { setStep(0); setEvent(''); setEmotionId(null); setIntensity(null); setWord(null) }
+  const reset = () => { setStep(0); setEvent(''); setEmotionId(null); setIntensity(null); setWord(null); setSavedId(null) }
 
   const finish = () => {
     const label = word?.word || emotion.name
-    addJournal({ date: todayStr(), event: event.trim() || '今天', emotionId, intensity, word: word?.word || '' })
+    const row = addJournal({ date: todayStr(), event: event.trim() || '今天', emotionId, intensity, word: word?.word || '' })
+    setSavedId(row.id)
     addStars(1)
     sfx.star(settings)
     speak(`記好了！你在${event.trim() || '今天'}覺得${label}，${INTENSITY[intensity - 1].label}。${emotion.cope}`, settings)
@@ -274,6 +276,23 @@ export default function Journal({ go }) {
               <p className="flex-1">💡 {emotion.cope}</p>
               <SpeakButton text={emotion.cope} className="w-[56px] h-[56px] min-w-0 min-h-0 text-2xl shrink-0" />
             </div>
+            {intensity >= 4 && (
+              <div className="card p-4 max-w-2xl w-full flex items-center gap-4 animate-popIn"
+                style={{ '--edge': '#93A88C', backgroundColor: '#EAF1E8' }}>
+                <span className="text-5xl shrink-0" aria-hidden="true">🌿</span>
+                <p className="flex-1 text-xl text-left">
+                  這個「{emotion.name}」有點大。要不要先去冷靜角做一件事？
+                </p>
+                <BigButton
+                  onClick={() => go('calm', { emotionId, intensity, journalId: savedId })}
+                  color="#93A88C"
+                  className="text-xl shrink-0"
+                >
+                  好
+                </BigButton>
+              </div>
+            )}
+
             <div className="flex flex-wrap gap-3 justify-center">
               <BigButton onClick={reset} color="#6FC2C0">➕ 再記一件事</BigButton>
               <BigButton onClick={() => setShowLog(true)} color="#7FA9D4">📖 看回顧</BigButton>

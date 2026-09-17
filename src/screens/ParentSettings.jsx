@@ -5,6 +5,7 @@ import { EMOTIONS, getEmotion } from '../data/emotions'
 import { useApp } from '../lib/store'
 import { speak } from '../lib/speech'
 import { INTENSITY } from './Journal'
+import { CALM_TOOLS } from '../data/calmTools'
 
 function Section({ title, children, note }) {
   return (
@@ -79,7 +80,16 @@ export default function ParentSettings({ go }) {
     const avg = j.length ? (j.reduce((s, x) => s + (x.intensity || 0), 0) / j.length).toFixed(1) : '—'
     const journalByEmotion = {}
     j.forEach((x) => { journalByEmotion[x.emotionId] = (journalByEmotion[x.emotionId] || 0) + 1 })
-    return { byEmotion, n, ok, rate: n ? Math.round((ok / n) * 100) : 0, journalCount: j.length, avg, journalByEmotion }
+    // 冷靜角：每個工具平均降了幾分。這是整個 App 最有臨床價值的一組數字。
+    const calm = {}
+    j.forEach((x) => {
+      if (!x.calmTool || x.afterIntensity == null) return
+      const row = (calm[x.calmTool] ||= { n: 0, drop: 0, worked: 0 })
+      row.n += 1
+      row.drop += x.intensity - x.afterIntensity
+      if (x.afterIntensity < x.intensity) row.worked += 1
+    })
+    return { byEmotion, n, ok, rate: n ? Math.round((ok / n) * 100) : 0, journalCount: j.length, avg, journalByEmotion, calm }
   }, [state.attempts, state.journal])
 
   const download = () => {
@@ -238,6 +248,34 @@ export default function ParentSettings({ go }) {
           </div>
         </Section>
 
+        <Section title="哪個冷靜方法有效？" note="只統計從「今天的心情」進冷靜角、做完有回答「現在幾分」的次數。">
+          {Object.keys(stats.calm).length === 0 ? (
+            <p className="text-inkSoft">
+              還沒有紀錄。情緒記到 4-5 分時，App 會主動問要不要去冷靜角，做完會再問一次現在幾分。
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {CALM_TOOLS.filter((t) => stats.calm[t.id]).map((t) => {
+                const r = stats.calm[t.id]
+                const avgDrop = (r.drop / r.n).toFixed(1)
+                return (
+                  <div key={t.id} className="flex items-center gap-3">
+                    <span className="text-2xl w-8 shrink-0" aria-hidden="true">{t.icon}</span>
+                    <span className="w-24 text-lg shrink-0">{t.name}</span>
+                    <div className="flex-1 h-5 rounded-full bg-line overflow-hidden">
+                      <div className="h-full bg-calm transition-all"
+                        style={{ width: `${Math.min(100, Math.max(0, (r.drop / r.n) / 4 * 100))}%` }} />
+                    </div>
+                    <span className="w-40 text-right text-inkSoft tabular-nums">
+                      平均降 {avgDrop} 分（{r.worked}/{r.n} 次有效）
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </Section>
+
         <Section title="最近的心情" note="用來看看孩子最近常出現哪些情緒、強度有多高。">
           {state.journal.length === 0 ? (
             <p className="text-inkSoft">還沒有心情紀錄。</p>
@@ -255,6 +293,11 @@ export default function ParentSettings({ go }) {
                       {INTENSITY[j.intensity - 1]?.label}（{j.intensity}）
                     </span>
                     <span className="flex-1 truncate">{j.event}</span>
+                    {j.afterIntensity != null && (
+                      <span className="shrink-0 text-base text-calm">
+                        🌿 {j.intensity}→{j.afterIntensity}
+                      </span>
+                    )}
                   </div>
                 )
               })}
