@@ -9,13 +9,14 @@ import { activeEmotions } from '../data/emotions'
 // 讓六個模式一眼就能用顏色 + 表情記住，不用先讀字。
 const MODES = [
   { id: 'gallery',   icon: '📚', title: '情緒圖鑑',     desc: '看看每種心情長什麼樣子', bg: '#EFD9A0', edge: '#C9A35C', ghost: 'happy' },
-  { id: 'where',     icon: '🧍', title: '情緒在哪裡？', desc: '身體會有什麼反應',       bg: '#BFDCD8', edge: '#7BAFAA', ghost: 'surprised' },
-  { id: 'match',     icon: '🎯', title: '配對遊戲',     desc: '找出正確的表情',         bg: '#BFD4E8', edge: '#7E9DBC', ghost: 'sad' },
-  { id: 'scenario',  icon: '🧩', title: '情境猜猜看',   desc: '他現在是什麼心情？',     bg: '#D3CBE8', edge: '#9C8FC2', ghost: 'angry' },
+  { id: 'where',     icon: '🧍', title: '情緒在哪裡？', desc: '身體會有什麼反應',       bg: '#BFDCD8', edge: '#7BAFAA', ghost: 'calm' },
+  { id: 'match',     icon: '🎯', title: '配對遊戲',     desc: '找出正確的表情',         bg: '#BFD4E8', edge: '#7E9DBC', ghost: 'surprised' },
+  { id: 'scenario',  icon: '🧩', title: '情境猜猜看',   desc: '他現在是什麼心情？',     bg: '#D3CBE8', edge: '#9C8FC2', ghost: 'sad' },
   { id: 'detective', icon: '🔍', title: '情緒小偵探',   desc: '找線索，猜心情有多強',   bg: '#E4D3BC', edge: '#B99A75', ghost: 'scared' },
-  { id: 'mimic',     icon: '🪞', title: '表情模仿',     desc: '照著做做看',             bg: '#EFC7B6', edge: '#C68E75', ghost: 'shy' },
-  { id: 'journal',   icon: '📔', title: '今天的心情',   desc: '說說今天發生的事',       bg: '#C4DCBC', edge: '#86AB7C', ghost: 'tired' },
-  { id: 'calm',      icon: '🌿', title: '冷靜角',       desc: '心情太大的時候來這裡',   bg: '#DCE4DA', edge: '#93A88C', ghost: 'calm' },
+  { id: 'voice',     icon: '👂', title: '聲音裡的情緒', desc: '聽聽看他是什麼心情',     bg: '#E0D8EC', edge: '#9C8FC2', ghost: 'tired' },
+  { id: 'mimic',     icon: '🪞', title: '表情模仿',     desc: '照著做做看',             bg: '#EFC7B6', edge: '#C68E75', ghost: 'angry' },
+  { id: 'journal',   icon: '📔', title: '今天的心情',   desc: '說說今天發生的事',       bg: '#C4DCBC', edge: '#86AB7C', ghost: 'shy' },
+  { id: 'calm',      icon: '🌿', title: '冷靜角',       desc: '心情太大的時候來這裡',   bg: '#DCE4DA', edge: '#93A88C', ghost: 'happy' },
   { id: 'rewards',   icon: '🎁', title: '我的貼紙簿',   desc: '看看收集到的貼紙',       bg: '#EFC9D6', edge: '#C48EA3', ghost: 'happy' },
 ]
 

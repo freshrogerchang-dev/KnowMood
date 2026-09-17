@@ -94,6 +94,35 @@ export function speak(text, settings = {}) {
   }
 }
 
+/**
+ * 用指定的語調唸一句話（「聲音裡的情緒」用）。
+ *
+ * ⚠️ 限制：Web Speech 只給得到 pitch / rate / volume 三個旋鈕，
+ * 而且不同語音引擎對 pitch 的支援差很多 —— 有些 voice 會直接忽略。
+ * 所以這裡的參數是刻意拉開的「誇張版」語調，不是自然說話的樣子。
+ * iOS/macOS 內建的 zh-TW 語音表現最好。
+ *
+ * @param {string} text
+ * @param {{pitch:number, rate:number, volume?:number}} tone
+ */
+export function speakWithTone(text, tone, settings = {}) {
+  if (!text || settings.speech === false || !speechSupported()) return
+  try {
+    speechSynthesis.cancel()
+    if (speechSynthesis.paused) speechSynthesis.resume()
+    if (!voicesReady) voice = pickVoice()
+    const u = new SpeechSynthesisUtterance(String(text))
+    u.lang = voice?.lang || 'zh-TW'
+    if (voice) u.voice = voice
+    u.pitch = Math.max(0, Math.min(2, tone.pitch))
+    u.rate = Math.max(0.1, Math.min(10, tone.rate))
+    u.volume = tone.volume ?? 1
+    speechSynthesis.speak(u)
+  } catch {
+    /* noop */
+  }
+}
+
 export function stopSpeaking() {
   if (speechSupported()) {
     try { speechSynthesis.cancel() } catch { /* noop */ }
