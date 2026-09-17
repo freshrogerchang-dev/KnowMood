@@ -14,6 +14,7 @@ const MODES = [
   { id: 'scenario',  icon: '🧩', title: '情境猜猜看',   desc: '他現在是什麼心情？',     bg: '#D3CBE8', edge: '#9C8FC2', ghost: 'sad' },
   { id: 'detective', icon: '🔍', title: '情緒小偵探',   desc: '找線索，猜心情有多強',   bg: '#E4D3BC', edge: '#B99A75', ghost: 'scared' },
   { id: 'voice',     icon: '👂', title: '聲音裡的情緒', desc: '聽聽看他是什麼心情',     bg: '#E0D8EC', edge: '#9C8FC2', ghost: 'tired' },
+  { id: 'family',    icon: '👪', title: '真人表情',     desc: '看看家人的表情',         bg: '#E8D7C3', edge: '#B99A75', ghost: 'sad' },
   { id: 'mimic',     icon: '🪞', title: '表情模仿',     desc: '照著做做看',             bg: '#EFC7B6', edge: '#C68E75', ghost: 'angry' },
   { id: 'journal',   icon: '📔', title: '今天的心情',   desc: '說說今天發生的事',       bg: '#C4DCBC', edge: '#86AB7C', ghost: 'shy' },
   { id: 'calm',      icon: '🌿', title: '冷靜角',       desc: '心情太大的時候來這裡',   bg: '#DCE4DA', edge: '#93A88C', ghost: 'happy' },

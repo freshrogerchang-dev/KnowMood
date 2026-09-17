@@ -16,6 +16,10 @@ export const randomOf = (arr) => arr[Math.floor(Math.random() * arr.length)]
  * 對 ADHD 的孩子，可預期的節奏比較容易維持專注。
  */
 export function buildRound(pool, length) {
+  // pool 是空的話絕對不能進迴圈 —— out.length 永遠到不了 length，
+  // while 會卡死整個分頁（曾經在真人表情遊戲踩到：還沒有任何照片時
+  // pairs 是空陣列，卻仍要求湊出至少 1 題）。
+  if (!pool.length) return []
   const out = []
   while (out.length < length) {
     const batch = shuffle(pool)

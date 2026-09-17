@@ -5,6 +5,7 @@ import MatchGame from './screens/MatchGame'
 import Scenario from './screens/Scenario'
 import CalmCorner from './screens/CalmCorner'
 import VoiceEmotion from './screens/VoiceEmotion'
+import FamilyFaces from './screens/FamilyFaces'
 import Detective from './screens/Detective'
 import WhereEmotion from './screens/WhereEmotion'
 import Mimic from './screens/Mimic'
@@ -21,6 +22,7 @@ const SCREENS = {
   scenario: Scenario,
   calm: CalmCorner,
   voice: VoiceEmotion,
+  family: FamilyFaces,
   detective: Detective,
   where: WhereEmotion,
   mimic: Mimic,

@@ -2,18 +2,44 @@
 let voice = null
 let voicesReady = false
 
+// 幫每個候選語音打分數，分數愈高愈自然。
+//
+// Web Speech 沒有給「這是不是神經網路合成」的旗標，只能用命名猜：
+// - iOS/macOS 內建的中文語音本身就是類神經網路合成，音質最好，直接是 zh-TW。
+// - Android/Chrome 的 "Google 國語（臺灣）" 是雲端合成，比系統內建的 espeak 好非常多。
+// - 名字裡有 Enhanced/Premium/Natural 通常代表廠商自己標的高音質版本。
+// - localService === false 在 Chrome 上大多代表雲端合成（更自然，但要連網路），
+//   在其他瀏覽器意義不一定一樣，所以只當作加分，不當唯一依據。
+function scoreVoice(v) {
+  let score = 0
+  if (v.lang === 'zh-TW') score += 100
+  else if (/^zh[-_]?(TW|Hant|HK)/i.test(v.lang)) score += 70
+  else if (/^zh/i.test(v.lang)) score += 40
+  else return -1 // 不是中文，直接淘汰
+
+  if (/google/i.test(v.name)) score += 20
+  if (/enhanced|premium|natural|neural|hd/i.test(v.name)) score += 15
+  if (v.localService === false) score += 5
+  return score
+}
+
 function pickVoice() {
   if (typeof speechSynthesis === 'undefined') return null
   const all = speechSynthesis.getVoices()
   if (!all.length) return null
   voicesReady = true
-  // 優先台灣中文，其次任何中文
-  return (
-    all.find((v) => v.lang === 'zh-TW') ||
-    all.find((v) => /^zh[-_]?(TW|Hant|HK)/i.test(v.lang)) ||
-    all.find((v) => /^zh/i.test(v.lang)) ||
-    null
-  )
+  const ranked = all
+    .map((v) => ({ v, score: scoreVoice(v) }))
+    .filter((x) => x.score >= 0)
+    .sort((a, b) => b.score - a.score)
+  return ranked[0]?.v || null
+}
+
+/** 目前選到的語音名稱，讓家長設定頁可以顯示「用的是哪個聲音」方便排查。 */
+export function currentVoiceLabel() {
+  if (!speechSupported()) return null
+  if (!voicesReady) voice = pickVoice()
+  return voice?.name || null
 }
 
 if (typeof speechSynthesis !== 'undefined') {
@@ -85,8 +111,8 @@ export function speak(text, settings = {}) {
     const u = new SpeechSynthesisUtterance(String(text))
     u.lang = voice?.lang || 'zh-TW'
     if (voice) u.voice = voice
-    u.rate = settings.speechRate ?? 0.85 // 比正常語速稍慢
-    u.pitch = 1.05
+    u.rate = settings.speechRate ?? 0.85 // 比正常語速稍慢，方便還不太識字的孩子聽懂
+    u.pitch = 1 // 用語音引擎原本設計的音高，不做人工變調，才不會聽起來金屬感很重
     u.volume = 1
     speechSynthesis.speak(u)
   } catch {

@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Screen } from '../components/UI'
 import EmotionFace from '../components/EmotionFace'
 import { EMOTIONS, getEmotion } from '../data/emotions'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speak, currentVoiceLabel } from '../lib/speech'
 import { INTENSITY } from './Journal'
 import { CALM_TOOLS } from '../data/calmTools'
+import FamilySetup from './FamilySetup'
 
 function Section({ title, children, note }) {
   return (
@@ -64,6 +65,17 @@ function Choice({ label, options, value, onChange, note }) {
 export default function ParentSettings({ go }) {
   const { state, settings, setSettings, setChildName, sync, cloud, syncNow, resetProgress, exportJSON } = useApp()
   const [confirmReset, setConfirmReset] = useState(false)
+  const [voiceLabel, setVoiceLabel] = useState(null)
+  const [showFamily, setShowFamily] = useState(false)
+
+  // 語音清單常常是非同步載入的（尤其 Chrome），開這頁時重新讀一次，
+  // 讓家長看得到「現在實際用的是哪一個聲音」，音質不好時知道問題在哪。
+  useEffect(() => {
+    setVoiceLabel(currentVoiceLabel())
+    const id = setInterval(() => setVoiceLabel(currentVoiceLabel()), 500)
+    const t = setTimeout(() => clearInterval(id), 3000)
+    return () => { clearInterval(id); clearTimeout(t) }
+  }, [])
 
   const stats = useMemo(() => {
     const byEmotion = {}
@@ -118,6 +130,10 @@ export default function ParentSettings({ go }) {
     ok: `已同步 ${sync.at ? new Date(sync.at).toLocaleTimeString('zh-TW') : ''}`,
     error: `同步失敗：${sync.error || ''}`,
   }[sync.status]
+
+  if (showFamily) {
+    return <FamilySetup onBack={() => setShowFamily(false)} />
+  }
 
   return (
     <Screen title="家長 / 治療師設定" onBack={() => go('home')} right={<span />}>
@@ -183,12 +199,43 @@ export default function ParentSettings({ go }) {
           </div>
         </Section>
 
+        <Section title="真人表情" note="讓孩子練習從家人真實的表情辨認情緒，而不只是卡通臉譜。">
+          <button
+            type="button"
+            onClick={() => setShowFamily(true)}
+            className="px-4 py-3 rounded-xl border-2 border-line bg-paper text-lg w-full text-left flex items-center justify-between"
+          >
+            <span>📷 管理家人表情相簿</span>
+            <span className="text-inkSoft">▶</span>
+          </button>
+        </Section>
+
         <Section title="感官與輔助" note="ASD 孩子對聲音、動態特別敏感時，請打開「低感官負荷模式」。">
           <Toggle label="低感官負荷模式" note="關掉所有動畫與音效，畫面保持安靜。"
             value={settings.lowSensory}
             onChange={(lowSensory) => setSettings({ lowSensory, sound: !lowSensory, motion: !lowSensory })} />
           <Toggle label="語音朗讀" note="把題目和情緒名稱唸出來（尚未識字時務必打開）。"
             value={settings.speech} onChange={(speech) => setSettings({ speech })} />
+          {settings.speech !== false && (
+            <div className="flex items-center gap-3 flex-wrap">
+              <p className="text-lg">
+                目前使用的語音：<b>{voiceLabel || '（讀取中…或這台裝置沒有中文語音）'}</b>
+              </p>
+              <button
+                type="button"
+                onClick={() => speak('哈囉，我是這台裝置念故事給你聽的聲音。', settings)}
+                className="px-4 py-2 rounded-xl border-2 border-line bg-paper text-base"
+              >
+                🔊 試聽
+              </button>
+            </div>
+          )}
+          {settings.speech !== false && !/google|enhanced|premium|neural|natural/i.test(voiceLabel || '') && (
+            <p className="text-sm text-inkSoft">
+              💡 iPad／iPhone 上通常已經是最好的內建語音；如果是舊款 Android 或電腦聽起來很生硬，
+              可以到系統設定安裝「Google 文字轉語音」或更新裝置的中文語音包，聲音會自然很多。
+            </p>
+          )}
           <div>
             <p className="text-lg">語速：{settings.speechRate.toFixed(2)}</p>
             <input
