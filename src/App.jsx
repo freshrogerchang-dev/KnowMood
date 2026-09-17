@@ -3,6 +3,8 @@ import Home from './screens/Home'
 import Gallery from './screens/Gallery'
 import MatchGame from './screens/MatchGame'
 import Scenario from './screens/Scenario'
+import Detective from './screens/Detective'
+import WhereEmotion from './screens/WhereEmotion'
 import Mimic from './screens/Mimic'
 import Journal from './screens/Journal'
 import Rewards from './screens/Rewards'
@@ -15,6 +17,8 @@ const SCREENS = {
   gallery: Gallery,
   match: MatchGame,
   scenario: Scenario,
+  detective: Detective,
+  where: WhereEmotion,
   mimic: Mimic,
   journal: Journal,
   rewards: Rewards,
