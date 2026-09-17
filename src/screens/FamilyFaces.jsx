@@ -9,7 +9,7 @@ import { useFamilyAlbum } from '../lib/familyPhotos'
 import { useApp } from '../lib/store'
 import { speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
-import { buildRound, buildChoices } from '../lib/quiz'
+import { buildRound, buildChoices, randomOf } from '../lib/quiz'
 
 // 真人表情
 //
@@ -20,8 +20,98 @@ import { buildRound, buildChoices } from '../lib/quiz'
 // 題目是家人的真實照片，答案選項維持跟其他遊戲一樣的 SVG 臉譜卡片 ——
 // 這樣孩子做的事情正好是「把真人表情對應回已經學會的抽象符號」，
 // 兩個方向都在練。照片只是題目來源，不會出現在答案選項裡。
+
+/**
+ * 示範畫面：借用「情緒圖鑑」已經做好的插畫臉譜當作「假裝是照片」的內容，
+ * 讓爸媽在還沒拍照片前，也能看到這個模式實際玩起來是什麼樣子。
+ *
+ * ⚠️ 這不是真正的練習：
+ * - 不呼叫 addStars / recordAttempt，不會污染孩子真正的星星和紀錄
+ * - 畫面上明確標示「示範・不是真的照片」，虛線外框跟真正的照片卡區分開來
+ * - 用中性的 tap 音效，不用 correct/star 音效，避免讓孩子誤以為這是在得分
+ * - 教學價值上其實跟「配對遊戲」重複（卡通對卡通，沒有真人→符號的轉換），
+ *   純粹是給家長看操作流程用的
+ */
+function DemoRound({ pool, settings, onExit }) {
+  const [answer] = useState(() => randomOf(pool))
+  const [picked, setPicked] = useState(null)
+  const choices = useMemo(() => buildChoices(answer, pool, settings.choices), [answer, pool, settings.choices]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const t = setTimeout(
+      () => speak('這是示範，不是真的照片。想像這是家人的表情，他是什麼心情？', settings),
+      300,
+    )
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const pick = (c) => {
+    if (picked) return
+    setPicked(c.id)
+    sfx.tap(settings)
+    speak(c.id === answer.id ? `對了，這是${answer.name}。` : `示範的答案是${answer.name}。`, settings)
+  }
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 py-2 w-full max-w-4xl mx-auto animate-popIn">
+      <div className="card px-4 py-2" style={{ '--edge': '#B99A75', backgroundColor: '#F3ECE0' }}>
+        <p className="text-lg font-bold">🎬 示範畫面・不是真的照片</p>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <div className="card p-2 border-dashed" style={{ '--edge': '#B99A75' }}>
+          <div
+            className="w-[200px] h-[200px] flex items-center justify-center rounded-2xl"
+            style={{ backgroundColor: answer.tint }}
+          >
+            <EmotionFace emotion={answer} size={160} animate />
+          </div>
+        </div>
+        <p className="text-lg text-inkSoft">想像這是「家人」的表情</p>
+        <h2 className="text-2xl font-display font-bold">他是什麼心情？</h2>
+      </div>
+
+      <div className={`grid gap-3 w-full ${choices.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'}`}>
+        {choices.map((c) => {
+          const isRight = picked && c.id === answer.id
+          const isWrongPick = picked === c.id && c.id !== answer.id
+          return (
+            <button
+              key={c.id}
+              type="button"
+              disabled={!!picked}
+              aria-label={c.name}
+              onClick={() => pick(c)}
+              className={`tap card p-3 flex flex-col items-center gap-1 transition-all duration-300
+                ${isRight ? 'ring-8 scale-105' : ''} ${isWrongPick ? 'opacity-40' : ''}`}
+              style={{ borderColor: c.color, '--edge': c.color, '--tw-ring-color': `${c.color}66`,
+                       backgroundColor: isRight ? `${c.color}22` : undefined }}
+            >
+              <EmotionFace emotion={c} size={110} animate={isRight} className="w-full h-auto max-w-[110px]" />
+              <span className="text-xl font-bold" style={{ color: c.color }}>
+                <Ruby text={c.name} zhuyin={c.zhuyin} show={settings.zhuyin} />
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      {picked && (
+        <div className="flex flex-col items-center gap-3 animate-popIn">
+          <p className="text-xl text-center max-w-lg text-inkSoft">
+            真正玩的時候，這裡會換成家人真實的照片，答案選項不會變。
+          </p>
+          <BigButton onClick={onExit} color="#F3C14F">🏠 回家</BigButton>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function FamilyFaces({ go }) {
   const { settings, addStars, recordAttempt } = useApp()
+  const [demo, setDemo] = useState(false)
   const { ready, members, hasPhoto } = useFamilyAlbum()
   const pool = useMemo(() => activeEmotions(settings), [settings])
   const len = settings.roundLength
@@ -91,6 +181,13 @@ export default function FamilyFaces({ go }) {
   }
 
   if (!usable) {
+    if (demo) {
+      return (
+        <Screen title="真人表情（示範）" onBack={() => go('home')}>
+          <DemoRound pool={pool} settings={settings} onExit={() => go('home')} />
+        </Screen>
+      )
+    }
     return (
       <Screen title="真人表情" onBack={() => go('home')}>
         <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center max-w-xl mx-auto">
@@ -100,7 +197,10 @@ export default function FamilyFaces({ go }) {
             請大人到「家長設定 → 真人表情 → 管理家人表情相簿」，
             拍幾張家人做出不同表情的照片，就可以在這裡練習囉。
           </p>
-          <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <BigButton onClick={() => setDemo(true)} color="#9C8FC2">🎬 看示範怎麼玩</BigButton>
+            <BigButton onClick={() => go('home')} color="#F3C14F">🏠 回家</BigButton>
+          </div>
         </div>
       </Screen>
     )
