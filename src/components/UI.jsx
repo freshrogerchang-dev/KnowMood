@@ -14,7 +14,7 @@ export function BigButton({ children, onClick, className = '', color = '#F3C14F'
         onClick?.(e)
       }}
       className={`tap card px-6 py-4 text-2xl font-bold flex items-center justify-center gap-3 hover:brightness-[0.99] ${className}`}
-      style={{ borderColor: color }}
+      style={{ borderColor: color, '--edge': color}}
       {...rest}
     >
       {children}
@@ -41,7 +41,11 @@ export function SpeakButton({ text, className = '', label = '再聽一次' }) {
 export function StarBadge({ className = '' }) {
   const { state } = useApp()
   return (
-    <div className={`flex items-center gap-1 text-2xl font-bold ${className}`} aria-label={`星星 ${state.stars} 顆`}>
+    <div
+      className={`sticker card blob-b px-4 py-2 flex items-center gap-2 text-2xl font-bold ${className}`}
+      style={{ '--edge': '#D8AE57', backgroundColor: '#FBEFCF' }}
+      aria-label={`星星 ${state.stars} 顆`}
+    >
       <span aria-hidden="true">⭐</span>
       <span className="tabular-nums">{state.stars}</span>
     </div>
@@ -66,7 +70,7 @@ export function Screen({ title, onBack, right, children, bg = 'bg-cream', backIc
         ) : (
           <span className="w-[72px]" />
         )}
-        <h1 className="text-2xl md:text-3xl font-bold truncate">{title}</h1>
+        <h1 className="text-2xl md:text-3xl font-display font-bold truncate">{title}</h1>
         <div className="min-w-[72px] flex justify-end">{right ?? <StarBadge />}</div>
       </header>
       <main className="flex-1 px-4 pb-6 flex flex-col">{children}</main>

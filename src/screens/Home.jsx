@@ -5,13 +5,15 @@ import { StarBadge, HoldToEnter } from '../components/UI'
 import EmotionFace from '../components/EmotionFace'
 import { activeEmotions } from '../data/emotions'
 
+// 每張卡片有自己的色系（低飽和、彼此分得開），右下角壓一個半透明的表情當背景，
+// 讓六個模式一眼就能用顏色 + 表情記住，不用先讀字。
 const MODES = [
-  { id: 'gallery', icon: '📚', title: '情緒圖鑑', desc: '看看每種心情長什麼樣子', color: '#F3C14F' },
-  { id: 'match', icon: '🎯', title: '配對遊戲', desc: '找出正確的表情', color: '#6FC2C0' },
-  { id: 'scenario', icon: '🧩', title: '情境猜猜看', desc: '他現在是什麼心情？', color: '#7FA9D4' },
-  { id: 'mimic', icon: '🪞', title: '表情模仿', desc: '照著做做看', color: '#EDA5B6' },
-  { id: 'journal', icon: '📔', title: '今天的心情', desc: '說說今天發生的事', color: '#93C08A' },
-  { id: 'rewards', icon: '🎁', title: '我的貼紙簿', desc: '看看收集到的貼紙', color: '#A99BD4' },
+  { id: 'gallery',  icon: '📚', title: '情緒圖鑑',   desc: '看看每種心情長什麼樣子', bg: '#EFD9A0', edge: '#C9A35C', ghost: 'happy' },
+  { id: 'match',    icon: '🎯', title: '配對遊戲',   desc: '找出正確的表情',        bg: '#BFDCD8', edge: '#7BAFAA', ghost: 'surprised' },
+  { id: 'scenario', icon: '🧩', title: '情境猜猜看', desc: '他現在是什麼心情？',    bg: '#BFD4E8', edge: '#7E9DBC', ghost: 'sad' },
+  { id: 'mimic',    icon: '🪞', title: '表情模仿',   desc: '照著做做看',            bg: '#EFC7B6', edge: '#C68E75', ghost: 'angry' },
+  { id: 'journal',  icon: '📔', title: '今天的心情', desc: '說說今天發生的事',      bg: '#C4DCBC', edge: '#86AB7C', ghost: 'calm' },
+  { id: 'rewards',  icon: '🎁', title: '我的貼紙簿', desc: '看看收集到的貼紙',      bg: '#D3CBE8', edge: '#9C8FC2', ghost: 'shy' },
 ]
 
 export default function Home({ go }) {
@@ -31,7 +33,7 @@ export default function Home({ go }) {
         <div className="flex items-center gap-3">
           <EmotionFace emotion={pool[0]} size={64} animate />
           <div>
-            <h1 className="text-3xl font-bold leading-tight">認識情緒</h1>
+            <h1 className="text-4xl font-display font-bold leading-tight">認識情緒</h1>
             <p className="text-inkSoft">
               {state.childName ? `哈囉，${state.childName}！` : '今天想玩什麼呢？'}
             </p>
@@ -40,18 +42,26 @@ export default function Home({ go }) {
         <StarBadge />
       </header>
 
-      <div className="grid grid-cols-2 gap-3 md:gap-4 flex-1 content-start">
-        {MODES.map((m) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 flex-1 auto-rows-fr">
+        {MODES.map((m, i) => (
           <button
             key={m.id}
             type="button"
             onClick={() => go(m.id)}
-            className="tap card p-4 md:p-5 flex flex-col items-center justify-center gap-1 text-center active:translate-y-[2px]"
-            style={{ borderColor: m.color, backgroundColor: `${m.color}14` }}
+            className={`tap card relative overflow-hidden p-4 md:p-5 flex flex-col items-center justify-center gap-1 text-center ${
+              i % 2 ? 'blob-b' : 'blob-a'
+            }`}
+            style={{ borderColor: m.edge, '--edge': m.edge, backgroundColor: m.bg }}
           >
-            <span className="text-5xl md:text-6xl" aria-hidden="true">{m.icon}</span>
-            <span className="text-xl md:text-2xl font-bold">{m.title}</span>
-            <span className="text-sm text-inkSoft hidden md:block">{m.desc}</span>
+            {/* 右下角的幽靈表情：被卡片裁掉一半，當成該模式的情緒標記 */}
+            <EmotionFace
+              emotion={m.ghost}
+              size={128}
+              className="pointer-events-none absolute -right-9 -bottom-10 opacity-[0.28] rotate-[8deg]"
+            />
+            <span className="relative text-5xl md:text-6xl" aria-hidden="true">{m.icon}</span>
+            <span className="relative text-xl md:text-2xl font-display font-bold">{m.title}</span>
+            <span className="relative text-sm text-ink/70 hidden md:block">{m.desc}</span>
           </button>
         ))}
       </div>

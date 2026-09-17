@@ -31,7 +31,7 @@ export default function Rewards({ go }) {
     <Screen title="我的貼紙簿" onBack={() => go('home')}>
       <div className="flex-1 flex flex-col items-center gap-4 w-full max-w-3xl mx-auto">
         {justGot && (
-          <div className="card p-4 w-full flex items-center gap-4 animate-popIn" style={{ borderColor: '#F3C14F' }}>
+          <div className="card p-4 w-full flex items-center gap-4 animate-popIn" style={{ borderColor: '#F3C14F', '--edge': '#F3C14F'}}>
             <span className="text-6xl animate-floatY" aria-hidden="true">{justGot.icon}</span>
             <div className="flex-1">
               <p className="text-2xl font-bold">得到新貼紙：{justGot.name}！</p>
@@ -75,7 +75,7 @@ export default function Rewards({ go }) {
               <div
                 key={s.id}
                 className={`card p-3 flex flex-col items-center gap-1 ${has ? '' : 'opacity-45'}`}
-                style={has ? { borderColor: '#F3C14F' } : undefined}
+                style={has ? { borderColor: '#F3C14F', '--edge': '#F3C14F'} : undefined}
               >
                 <span className="text-5xl" aria-hidden="true">{has ? s.icon : '❓'}</span>
                 <span className="text-base font-bold text-center">{has ? s.name : `${s.cost} ⭐`}</span>

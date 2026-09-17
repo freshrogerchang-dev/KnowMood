@@ -120,7 +120,7 @@ export default function Scenario({ go }) {
                   onClick={() => pick(c)}
                   className={`tap card p-3 flex flex-col items-center gap-1 transition-all duration-300
                     ${isWrong ? 'opacity-25 grayscale' : ''} ${hinted ? 'animate-floatY ring-4' : ''}`}
-                  style={{ borderColor: c.color, '--tw-ring-color': `${c.color}66` }}
+                  style={{ borderColor: c.color, '--edge': c.color, '--tw-ring-color': `${c.color}66` }}
                 >
                   <EmotionFace emotion={c} size={160} className="w-full h-auto max-w-[160px]" />
                   <span className="text-3xl font-bold" style={{ color: c.color }}>

@@ -121,7 +121,7 @@ export default function Mimic({ go }) {
                   className={`tap card p-3 flex flex-col items-center gap-1 text-center ${
                     step === i ? 'ring-4' : 'opacity-80'
                   }`}
-                  style={{ borderColor: target.color, '--tw-ring-color': `${target.color}66` }}
+                  style={{ borderColor: target.color, '--edge': target.color, '--tw-ring-color': `${target.color}66` }}
                 >
                   <span className="text-3xl" aria-hidden="true">{s.icon}</span>
                   <span className="text-sm text-inkSoft">{s.label}</span>

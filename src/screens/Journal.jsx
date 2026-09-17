@@ -166,7 +166,7 @@ export default function Journal({ go }) {
                     setTimeout(() => { setStep(2); speak(`那個${e.name}有多少呢？`, settings) }, 600)
                   }}
                   className="tap card p-3 flex flex-col items-center gap-1"
-                  style={{ borderColor: e.color }}
+                  style={{ borderColor: e.color, '--edge': e.color}}
                 >
                   <EmotionFace emotion={e} size={110} className="w-full h-auto max-w-[110px]" />
                   <span className="text-2xl font-bold" style={{ color: e.color }}>
@@ -197,7 +197,7 @@ export default function Journal({ go }) {
                   onClick={() => { sfx.tap(settings); setIntensity(lv.v); setWord(null); speak(`${lv.label}，${lv.v}分`, settings) }}
                   className={`tap card p-2 flex flex-col items-center justify-end gap-1 flex-1 max-w-[132px] transition-all
                     ${intensity === lv.v ? 'ring-8 scale-[1.03]' : 'opacity-80'}`}
-                  style={{ borderColor: emotion.color, '--tw-ring-color': `${emotion.color}55` }}
+                  style={{ borderColor: emotion.color, '--edge': emotion.color, '--tw-ring-color': `${emotion.color}55` }}
                   aria-label={`${lv.label}，${lv.v}分`}
                 >
                   <EmotionFace emotion={emotion} size={Math.round(104 * lv.scale)} className="h-auto" />
@@ -228,7 +228,7 @@ export default function Journal({ go }) {
                         word?.word === w.word ? 'ring-4' : 'opacity-75'
                       }`}
                       style={{
-                        borderColor: emotion.color,
+                        borderColor: emotion.color, '--edge': emotion.color,
                         color: emotion.color,
                         '--tw-ring-color': `${emotion.color}55`,
                         backgroundColor: word?.word === w.word ? `${emotion.color}1F` : undefined,

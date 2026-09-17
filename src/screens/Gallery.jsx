@@ -82,7 +82,7 @@ export default function Gallery({ go }) {
                 className={`tap min-h-0 h-[60px] px-4 rounded-2xl border-2 text-lg font-bold flex items-center gap-2 ${
                   tab === t.id ? 'bg-paper' : 'bg-transparent border-line text-inkSoft'
                 }`}
-                style={tab === t.id ? { borderColor: e.color } : undefined}
+                style={tab === t.id ? { borderColor: e.color, '--edge': e.color} : undefined}
               >
                 <span aria-hidden="true">{t.icon}</span>{t.label}
               </button>
@@ -102,7 +102,7 @@ export default function Gallery({ go }) {
                     <div
                       key={w.word}
                       className="rounded-2xl border-2 overflow-hidden"
-                      style={{ borderColor: e.color, backgroundColor: `${e.color}${['0D', '14', '1F', '29', '33', '3D'][idx] || '33'}` }}
+                      style={{ borderColor: e.color, '--edge': e.color, backgroundColor: `${e.color}${['0D', '14', '1F', '29', '33', '3D'][idx] || '33'}` }}
                     >
                       <button
                         type="button"
@@ -166,7 +166,7 @@ export default function Gallery({ go }) {
               aria-label={p.name}
               onClick={() => { sfx.tap(settings); setI(idx) }}
               className={`w-4 h-4 rounded-full border-2 ${idx === i ? '' : 'bg-paper'}`}
-              style={{ borderColor: p.color, backgroundColor: idx === i ? p.color : undefined }}
+              style={{ borderColor: p.color, '--edge': p.color, backgroundColor: idx === i ? p.color : undefined }}
             />
           ))}
         </div>

@@ -108,8 +108,9 @@ export default function EmotionFace({ emotion, size = 160, animate = false, clas
       role="img"
       aria-label={e.name}
     >
-      {/* 頭 */}
-      <circle cx="60" cy="62" r="44" fill={e.tint} stroke={e.color} strokeWidth="3.5" />
+      {/* 頭：外面加一圈淡淡的光暈，臉才不會像貼在背景上 */}
+      <circle cx="60" cy="62" r="50" fill={e.color} opacity="0.26" />
+      <circle cx="60" cy="62" r="44" fill={e.tint} stroke={e.color} strokeWidth="4" />
 
       {/* 臉紅（害羞 / 開心） */}
       {f.blush && (
@@ -136,9 +137,9 @@ export default function EmotionFace({ emotion, size = 160, animate = false, clas
 
       {/* 額外線索 */}
       {f.tear && (
-        <path d="M32 70 C28 79 28 84 32 84 C36 84 36 79 32 70 Z" fill="#7FB4E8" className={animate ? 'animate-floatY' : ''} />
+        <path d="M31 68 C25 79 25 86 31 86 C37 86 37 79 31 68 Z" fill="#7FB4E8" stroke="#5B92C9" strokeWidth="1.2" className={animate ? 'animate-floatY' : ''} />
       )}
-      {f.sweat && <path d="M96 24 C92 33 92 38 96 38 C100 38 100 33 96 24 Z" fill="#8FC7E8" />}
+      {f.sweat && <path d="M96 22 C90 33 90 40 96 40 C102 40 102 33 96 22 Z" fill="#8FC7E8" stroke="#6BA6CC" strokeWidth="1.2" />}
       {f.steam && (
         <>
           <path d="M24 22 q7 -9 14 -1" stroke={e.color} strokeWidth="3.2" fill="none" strokeLinecap="round" opacity="0.8" />

@@ -162,7 +162,7 @@ export default function ParentSettings({ go }) {
                   onClick={() => toggleEmotion(e.id)}
                   disabled={e.level > settings.level}
                   className={`card p-2 flex flex-col items-center gap-1 ${on ? '' : 'opacity-35'}`}
-                  style={{ borderColor: e.color }}
+                  style={{ borderColor: e.color, '--edge': e.color}}
                 >
                   <EmotionFace emotion={e} size={56} />
                   <span className="text-base font-bold">{e.name}</span>

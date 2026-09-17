@@ -18,9 +18,21 @@ export default {
         calm: '#93C08A',
         shy: '#EDA5B6',
         tired: '#B7AFA4',
+        // 六個模式各自的色系：低飽和、彼此分得開，不跟情緒色混用
+        mode: {
+          sun:   '#EFD9A0', sunEdge:   '#C9A35C',
+          sky:   '#BFD4E8', skyEdge:   '#7E9DBC',
+          leaf:  '#C4DCBC', leafEdge:  '#86AB7C',
+          coral: '#EFC7B6', coralEdge: '#C68E75',
+          lilac: '#D3CBE8', lilacEdge: '#9C8FC2',
+          mint:  '#BFDCD8', mintEdge:  '#7BAFAA',
+        },
       },
       fontFamily: {
         round: ['"PingFang TC"', '"Noto Sans TC"', '"Microsoft JhengHei"', 'system-ui', 'sans-serif'],
+        // 標題用圓體。「Yuanti TC」是 iPad / Mac 內建的繁中圓體，不用下載字型檔，
+        // 沒有的平台就退回一般的黑體，不會變成日文字形。
+        display: ['"Yuanti TC"', '"PingFang TC"', '"Noto Sans TC"', '"Microsoft JhengHei"', 'system-ui', 'sans-serif'],
       },
       borderRadius: { blob: '2rem' },
       boxShadow: {

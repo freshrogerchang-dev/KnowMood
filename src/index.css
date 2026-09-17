@@ -6,6 +6,9 @@
   html, body, #root { height: 100%; }
   body {
     @apply bg-cream text-ink font-round antialiased;
+    /* 紙張質感：極淡的圓點網格，讓大片奶油底色不會死板 */
+    background-image: radial-gradient(circle at 1px 1px, rgba(63, 58, 52, 0.045) 1px, transparent 0);
+    background-size: 18px 18px;
     /* 平板上避免長按選字、雙擊縮放造成誤觸 */
     -webkit-tap-highlight-color: transparent;
     -webkit-user-select: none;
@@ -27,11 +30,29 @@
 @layer components {
   /* 所有可點擊區塊最小 88px，符合幼兒觸控與動作協調需求 */
   .tap {
-    @apply min-h-[88px] min-w-[88px] select-none active:translate-y-[2px] transition-transform;
+    @apply min-h-[88px] min-w-[88px] select-none transition-[transform,box-shadow] duration-150;
   }
+  /* 卡片：不規則圓角（手繪繪本感）+ 與邊框同色的硬陰影。
+     邊框色用 --edge 傳進來，陰影會自動跟著變。 */
   .card {
-    @apply bg-paper border-2 border-line rounded-blob shadow-soft;
+    @apply bg-paper border-[3px] blob-a;
+    border-color: var(--edge, #E8E0D4);
+    box-shadow: 0 6px 0 0 var(--edge, #E8E0D4), 0 12px 20px -10px rgba(63, 58, 52, 0.28);
   }
+
+  /* 按下去會真的「壓下去」：位移 + 陰影塌掉，給明確的觸覺回饋 */
+  button.card:active,
+  .card button:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 0 var(--edge, #E8E0D4), 0 4px 8px -4px rgba(63, 58, 52, 0.28);
+  }
+
+  /* 左右兩種不對稱圓角，相鄰卡片交替使用，看起來像手畫的 */
+  .blob-a { border-radius: 28px 22px 29px 21px; }
+  .blob-b { border-radius: 21px 29px 22px 28px; }
+
+  /* 貼紙感：微微轉一點角度 */
+  .sticker { transform: rotate(-1.2deg); }
 }
 
 /* 低感官負荷模式：關掉所有動畫與轉場 */

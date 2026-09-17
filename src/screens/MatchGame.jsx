@@ -115,7 +115,7 @@ export default function MatchGame({ go }) {
                   ${isRight ? 'scale-105 ring-8' : ''}
                   ${hinted && !solved ? 'animate-floatY ring-4' : ''}`}
                 style={{
-                  borderColor: c.color,
+                  borderColor: c.color, '--edge': c.color,
                   '--tw-ring-color': `${c.color}66`,
                   backgroundColor: isRight ? `${c.color}22` : undefined,
                 }}
