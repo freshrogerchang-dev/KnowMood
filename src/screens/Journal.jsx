@@ -195,14 +195,16 @@ export default function Journal({ go }) {
                   key={lv.v}
                   type="button"
                   onClick={() => { sfx.tap(settings); setIntensity(lv.v); setWord(null); speak(`${lv.label}，${lv.v}分`, settings) }}
-                  className={`tap card p-2 flex flex-col items-center justify-end gap-1 flex-1 max-w-[132px] transition-all
+                  className={`card p-2 min-h-[104px] min-w-0 select-none flex flex-col items-center justify-end gap-1 flex-1 max-w-[132px] transition-all
                     ${intensity === lv.v ? 'ring-8 scale-[1.03]' : 'opacity-80'}`}
                   style={{ borderColor: emotion.color, '--edge': emotion.color, '--tw-ring-color': `${emotion.color}55` }}
                   aria-label={`${lv.label}，${lv.v}分`}
                 >
-                  <EmotionFace emotion={emotion} size={Math.round(104 * lv.scale)} className="h-auto" />
-                  <span className="text-3xl font-bold tabular-nums" style={{ color: emotion.color }}>{lv.v}</span>
-                  <span className="text-base md:text-lg text-inkSoft">{lv.label}</span>
+                  <span className="block" style={{ width: `${Math.round(lv.scale * 72)}%` }}>
+                    <EmotionFace emotion={emotion} size={104} className="w-full h-auto" />
+                  </span>
+                  <span className="text-2xl md:text-3xl font-bold tabular-nums" style={{ color: emotion.color }}>{lv.v}</span>
+                  <span className="text-sm md:text-lg text-inkSoft leading-tight">{lv.label}</span>
                 </button>
               ))}
             </div>

@@ -112,14 +112,24 @@ export default function Detective({ go }) {
       <ProgressDots total={len} done={qi} />
 
       <div className="flex-1 flex flex-col items-center gap-4 py-2 w-full max-w-4xl mx-auto">
-        {/* 故事卡 */}
-        <div className="card w-full p-4 md:p-5 flex items-start gap-4" style={{ '--edge': '#D9C9A8' }}>
-          <span className="text-6xl md:text-7xl shrink-0" aria-hidden="true">{q.icon}</span>
+        {/* 故事卡。進到後面兩步時收成一行 —— 故事已經讀過也唸過了，
+            把垂直空間讓給溫度計，手機上才不用捲來捲去。點標題可以再聽一次。 */}
+        <div className="card w-full p-3 md:p-5 flex items-start gap-3 md:gap-4" style={{ '--edge': '#D9C9A8' }}>
+          <span className={`shrink-0 ${phase === 'emotion' ? 'text-6xl md:text-7xl' : 'text-4xl'}`} aria-hidden="true">
+            {q.icon}
+          </span>
           <div className="flex-1 min-w-0">
-            <p className="text-lg text-inkSoft mb-1">🔍 {q.title}</p>
-            <p className="text-xl md:text-2xl leading-relaxed">{q.story}</p>
+            <p className="text-lg text-inkSoft">🔍 {q.title}</p>
+            {phase === 'emotion' ? (
+              <p className="text-xl md:text-2xl leading-relaxed mt-1">{q.story}</p>
+            ) : (
+              <p className="text-base text-inkSoft truncate">{q.story}</p>
+            )}
           </div>
-          <SpeakButton text={q.story} className="w-[64px] h-[64px] min-w-0 min-h-0 text-3xl shrink-0" />
+          <SpeakButton
+            text={q.story}
+            className={`min-w-0 min-h-0 shrink-0 ${phase === 'emotion' ? 'w-[64px] h-[64px] text-3xl' : 'w-[52px] h-[52px] text-2xl'}`}
+          />
         </div>
 
         {/* 第一步：他覺得怎麼樣？ */}
@@ -168,13 +178,15 @@ export default function Detective({ go }) {
                   type="button"
                   aria-label={`${lv.label}，${lv.v}分`}
                   onClick={() => pickIntensity(lv.v)}
-                  className={`tap card p-2 flex flex-col items-center justify-end gap-1 flex-1 max-w-[132px] transition-all
+                  className={`card p-2 min-h-[104px] min-w-0 select-none flex flex-col items-center justify-end gap-1 flex-1 max-w-[132px] transition-all
                     ${intensity === lv.v ? 'ring-8 scale-[1.03]' : 'opacity-80'}`}
                   style={{ borderColor: answer.color, '--edge': answer.color, '--tw-ring-color': `${answer.color}55` }}
                 >
-                  <EmotionFace emotion={answer} size={Math.round(96 * lv.scale)} className="h-auto" />
-                  <span className="text-3xl font-bold tabular-nums" style={{ color: answer.color }}>{lv.v}</span>
-                  <span className="text-base md:text-lg text-inkSoft">{lv.label}</span>
+                  <span className="block" style={{ width: `${Math.round(lv.scale * 72)}%` }}>
+                    <EmotionFace emotion={answer} size={96} className="w-full h-auto" />
+                  </span>
+                  <span className="text-2xl md:text-3xl font-bold tabular-nums" style={{ color: answer.color }}>{lv.v}</span>
+                  <span className="text-sm md:text-lg text-inkSoft leading-tight">{lv.label}</span>
                 </button>
               ))}
             </div>
