@@ -16,18 +16,22 @@ export const VOICE_LINES = [
   '是這樣喔',
 ]
 
-// Web Speech 只有 pitch / rate / volume 三個旋鈕，所以這些是刻意誇張的版本。
-// 沒有列在這裡的情緒（害羞、驚訝以外的細緻情緒）不會出現在這個遊戲裡 ——
-// 聽不出差別的題目只會讓孩子猜，學不到東西。
+// Web Speech 只有 pitch / rate / volume 三個旋鈕，能拉開的空間有限。
+// 八種情緒硬塞進這兩個維度會有好幾組聽起來幾乎一樣（開心↔害怕、難過↔累了、
+// 平靜↔難過…），那種題目孩子只能用猜的，學不到東西。
+//
+// 所以這個遊戲只收「聲音上真的分得出來」的六種。平靜與害羞沒有列進來 ——
+// 它們的聲音特徵（慢、小聲）跟難過和累了重疊太多，連大人光聽都不容易分。
+// hasTone() 會自動把它們排除在選項之外。
+//
+// 下面任兩組之間，pitch 或 rate 至少差 0.25（見 npm 測試的驗算）。
 export const VOICE_TONES = {
-  happy:     { pitch: 1.55, rate: 1.15, volume: 1 },
-  sad:       { pitch: 0.75, rate: 0.70, volume: 0.8 },
-  angry:     { pitch: 0.85, rate: 1.40, volume: 1 },
-  scared:    { pitch: 1.60, rate: 1.30, volume: 0.9 },
-  surprised: { pitch: 1.80, rate: 1.25, volume: 1 },
-  calm:      { pitch: 1.00, rate: 0.85, volume: 0.9 },
-  tired:     { pitch: 0.70, rate: 0.60, volume: 0.7 },
-  shy:       { pitch: 1.20, rate: 0.80, volume: 0.45 },
+  tired:     { pitch: 0.60, rate: 0.55, volume: 0.7 }, // 很低、很慢
+  sad:       { pitch: 0.85, rate: 0.80, volume: 0.8 }, // 低、慢
+  angry:     { pitch: 0.80, rate: 1.50, volume: 1 },   // 低但很快 = 用力
+  happy:     { pitch: 1.45, rate: 1.15, volume: 1 },   // 高、偏快
+  scared:    { pitch: 1.60, rate: 1.60, volume: 0.9 }, // 又高又急
+  surprised: { pitch: 1.95, rate: 1.05, volume: 1 },   // 最高，但速度正常
 }
 
 export const hasTone = (emotionId) => Boolean(VOICE_TONES[emotionId])
@@ -36,10 +40,8 @@ export const hasTone = (emotionId) => Boolean(VOICE_TONES[emotionId])
 export const TONE_CLUE = {
   happy: '聲音比較高、比較快，像在跳。',
   sad: '聲音低低的、慢慢的，好像沒有力氣。',
-  angry: '聲音又快又重，像在用力推。',
-  scared: '聲音又高又急，有點抖。',
-  surprised: '聲音突然變得很高。',
-  calm: '聲音平平的、慢慢的，很穩。',
+  angry: '聲音低低的可是很快很用力，像在推東西。',
+  scared: '聲音又高又急，像在趕時間。',
+  surprised: '聲音一下子變得好高。',
   tired: '聲音很低、拖得很長，像快睡著了。',
-  shy: '聲音變得好小聲，慢慢的。',
 }
