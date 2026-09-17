@@ -11,7 +11,7 @@
 export const CALM_TOOLS = [
   {
     id: 'turtle',
-    icon: '🐢',
+    icon: 'turtle',
     name: '烏龜呼吸',
     hint: '像烏龜一樣，慢慢把頭縮進殼裡，再慢慢伸出來。',
     rounds: 4,
@@ -23,7 +23,7 @@ export const CALM_TOOLS = [
   },
   {
     id: 'bubble',
-    icon: '🫧',
+    icon: 'bubble',
     name: '吹泡泡',
     hint: '慢慢吹，泡泡才會愈來愈大，不會破掉。',
     rounds: 5,
@@ -35,7 +35,7 @@ export const CALM_TOOLS = [
   },
   {
     id: 'count',
-    icon: '🔟',
+    icon: 'count',
     name: '數到十',
     hint: '一個一個慢慢數，數完心裡會比較鬆。',
     rounds: 1,
@@ -43,7 +43,7 @@ export const CALM_TOOLS = [
   },
   {
     id: 'squeeze',
-    icon: '🤏',
+    icon: 'squeeze',
     name: '擠一擠',
     hint: '用力把球擠扁，數到五，再放開。',
     rounds: 3,

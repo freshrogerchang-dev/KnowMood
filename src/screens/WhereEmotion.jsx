@@ -151,7 +151,7 @@ export default function WhereEmotion({ go }) {
                   backgroundColor: isFound ? `${target.color}1F` : undefined,
                 }}
               >
-                <span className="text-4xl md:text-5xl" aria-hidden="true">{c.icon}</span>
+                <Icon name={c.icon} size={44} color={isFound ? target.color : undefined} />
                 <span className="text-xl md:text-2xl font-bold leading-snug">{c.text}</span>
                 {isFound && <Icon name="check" size={22} color="#5FAE86" />}
               </button>

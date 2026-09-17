@@ -155,7 +155,7 @@ export default function CalmCorner({ go, params }) {
                   className={`tap card p-4 flex flex-col items-center gap-1 text-center ${i % 2 ? 'blob-b' : 'blob-a'}`}
                   style={{ borderColor: '#9CC49A', '--edge': '#9CC49A', backgroundColor: '#EAF3E7' }}
                 >
-                  <span className="text-5xl" aria-hidden="true">{t.icon}</span>
+                  <Icon name={t.icon} size={48} color="#5FAE86" />
                   <span className="text-2xl font-display font-bold">{t.name}</span>
                   <span className="text-base text-ink/70 leading-snug">{t.hint}</span>
                 </button>
@@ -168,7 +168,9 @@ export default function CalmCorner({ go, params }) {
         {/* 進行中 */}
         {tool && !finished && (
           <div className="flex flex-col items-center gap-4 w-full">
-            <h2 className="text-3xl font-display font-bold">{tool.icon} {tool.name}</h2>
+            <h2 className="text-3xl font-display font-bold flex items-center justify-center gap-2">
+              <Icon name={tool.icon} size={30} color={color} />{tool.name}
+            </h2>
 
             {/* 會呼吸的圓圈。大小走 inline style，低感官模式下沒有 transition 就變成一格一格跳，
                 不會整個動不了。 */}
@@ -186,9 +188,11 @@ export default function CalmCorner({ go, params }) {
                 transition: motion ? 'transform 900ms ease-in-out' : 'none',
               }}
             >
-              <span className="text-8xl" aria-hidden="true">
-                {tool.counting ? count : tool.icon}
-              </span>
+              {tool.counting ? (
+                <span className="text-8xl font-bold" style={{ color }} aria-hidden="true">{count}</span>
+              ) : (
+                <Icon name={tool.icon} size={120} color={color} />
+              )}
             </button>
 
             <p className="text-4xl font-display font-bold" style={{ color }}>

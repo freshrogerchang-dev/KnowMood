@@ -223,11 +223,173 @@ const P = {
       <path d="M20 27h24M20 34h16" stroke={c} strokeWidth="2.6" strokeLinecap="round" />
     </>
   ),
+  turtle: ({ c, s }) => (
+    <>
+      <path d="M12 42a20 15 0 0 1 40 0Z" fill={s} stroke={c} strokeWidth="3.4" strokeLinejoin="round" />
+      <circle cx="9" cy="40" r="6" fill={s} stroke={c} strokeWidth="3" />
+      <circle cx="7" cy="38" r="1.2" fill={c} />
+      <path d="M18 48l-3 6M28 50l-2 6M40 50l2 6M50 48l3 6" stroke={c} strokeWidth="2.8" strokeLinecap="round" />
+      <path d="M54 44l6 2-6 3Z" fill={s} stroke={c} strokeWidth="2.4" strokeLinejoin="round" />
+    </>
+  ),
+  bubble: ({ c, s }) => (
+    <>
+      <circle cx="27" cy="35" r="17" fill={s} stroke={c} strokeWidth="3.2" />
+      <circle cx="46" cy="19" r="8" fill={s} stroke={c} strokeWidth="2.8" />
+      <circle cx="21" cy="27" r="3.5" fill="#fff" opacity="0.75" />
+      <circle cx="43" cy="16" r="1.8" fill="#fff" opacity="0.75" />
+    </>
+  ),
+  count: ({ c, s }) => (
+    <>
+      <rect x="8" y="16" width="48" height="32" rx="8" fill={s} stroke={c} strokeWidth="3.4" />
+      <text x="32" y="39" fontSize="21" fontWeight="700" textAnchor="middle" fill={c} fontFamily="sans-serif">10</text>
+    </>
+  ),
+  squeeze: ({ c, s }) => (
+    <>
+      <circle cx="32" cy="32" r="15" fill={s} stroke={c} strokeWidth="3.4" />
+      <path d="M32 2v10M26 6l6 6 6-6" fill="none" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M32 62v-10M26 58l6-6 6 6" fill="none" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 32h10M6 26l6 6-6 6" fill="none" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M62 32h-10M58 26l-6 6 6 6" fill="none" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  clap: ({ c, s }) => (
+    <>
+      <path d="M14 40c-2-10 4-20 14-22 8-2 15 3 17 11" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" strokeLinecap="round" />
+      <path d="M50 40c2-10-4-20-14-22-8-2-15 3-17 11" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" strokeLinecap="round" />
+      <path d="M18 42q14 10 28 0" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" />
+      <path d="M30 8l2 6M34 8l-2 6M11 18l4 4M53 18l-4 4" stroke={c} strokeWidth="2.2" strokeLinecap="round" />
+    </>
+  ),
+  jump: ({ c }) => (
+    <>
+      <circle cx="32" cy="14" r="6" fill="none" stroke={c} strokeWidth="3" />
+      <path d="M32 20v14M32 34l-10 14M32 34l10 14M32 26l-12-4M32 26l12-4" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </>
+  ),
+  tear: ({ c, s }) => (
+    <path d="M32 12c9 12 14 20 14 27a14 14 0 0 1-28 0c0-7 5-15 14-27Z" fill={s} stroke={c} strokeWidth="3.4" strokeLinejoin="round" />
+  ),
+  droop: ({ c, s }) => (
+    <>
+      <circle cx="32" cy="20" r="13" fill={s} stroke={c} strokeWidth="3.4" />
+      <path d="M23 19q9 7 18 0" fill="none" stroke={c} strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M32 38v8M25 44l7 7 7-7" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </>
+  ),
+  stop: ({ c, s }) => (
+    <>
+      <polygon points="20,8 44,8 56,20 56,44 44,56 20,56 8,44 8,20" fill={s} stroke={c} strokeWidth="3.4" strokeLinejoin="round" />
+      <path d="M18 32h28" stroke={c} strokeWidth="4" strokeLinecap="round" />
+    </>
+  ),
+  fist: ({ c, s }) => (
+    <>
+      <rect x="16" y="24" width="32" height="26" rx="10" fill={s} stroke={c} strokeWidth="3.4" />
+      <path d="M24 24v-6M32 24v-8M40 24v-6" stroke={c} strokeWidth="3" strokeLinecap="round" />
+      <rect x="10" y="34" width="11" height="15" rx="5.5" fill={s} stroke={c} strokeWidth="3" />
+    </>
+  ),
+  megaphone: ({ c, s }) => (
+    <>
+      <path d="M10 30v8l10 3V27Z" fill={s} stroke={c} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M20 24v20l26 10V14Z" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <path d="M14 41l3 10" stroke={c} strokeWidth="3" strokeLinecap="round" />
+      <path d="M50 22q6 6 0 12" fill="none" stroke={c} strokeWidth="2.6" strokeLinecap="round" />
+    </>
+  ),
+  stomp: ({ c, s }) => (
+    <>
+      <path d="M10 46c0-10 6-18 14-20l4-8 14 4v14l10 4v6a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4Z" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <path d="M14 52l-4 6M32 52v6M50 52l4 6" stroke={c} strokeWidth="2.6" strokeLinecap="round" />
+    </>
+  ),
+  push: ({ c, s }) => (
+    <>
+      <rect x="30" y="18" width="26" height="26" rx="3" fill={s} stroke={c} strokeWidth="3.2" />
+      <path d="M6 31h18M18 23l8 8-8 8" fill="none" stroke={c} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  shiver: ({ c }) => (
+    <>
+      <path d="M16 12q6 8 0 16t0 16t0 16" fill="none" stroke={c} strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M32 12q6 8 0 16t0 16t0 16" fill="none" stroke={c} strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M48 12q6 8 0 16t0 16t0 16" fill="none" stroke={c} strokeWidth="3.4" strokeLinecap="round" />
+    </>
+  ),
+  door: ({ c, s }) => (
+    <>
+      <rect x="16" y="8" width="32" height="48" rx="2" fill={s} stroke={c} strokeWidth="3.4" />
+      <circle cx="38" cy="32" r="2.6" fill={c} />
+    </>
+  ),
+  heartbeat: ({ c, s }) => (
+    <>
+      <path d="M32 50C14 38 8 26 14 18c5-7 15-6 18 2 3-8 13-9 18-2 6 8 0 20-18 32Z" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <path d="M12 30h8l4-8 6 14 4-9 3 3h9" fill="none" stroke={c} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+    </>
+  ),
+  gasp: ({ c, s }) => (
+    <ellipse cx="32" cy="32" rx="14" ry="18" fill={s} stroke={c} strokeWidth="3.6" />
+  ),
+  pause: ({ c }) => (
+    <>
+      <rect x="16" y="12" width="12" height="40" rx="4" fill={c} />
+      <rect x="36" y="12" width="12" height="40" rx="4" fill={c} />
+    </>
+  ),
+  chair: ({ c, s }) => (
+    <>
+      <path d="M18 10v26M18 10h20a4 4 0 0 1 4 4v10" fill="none" stroke={c} strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="16" y="34" width="30" height="8" rx="2" fill={s} stroke={c} strokeWidth="3.2" />
+      <path d="M18 42v12M44 42v12" stroke={c} strokeWidth="3.4" strokeLinecap="round" />
+    </>
+  ),
+  sofa: ({ c, s }) => (
+    <>
+      <rect x="10" y="26" width="44" height="18" rx="6" fill={s} stroke={c} strokeWidth="3.2" />
+      <path d="M14 26v-8a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v8" fill="none" stroke={c} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M12 44v6M52 44v6" stroke={c} strokeWidth="3.4" strokeLinecap="round" />
+    </>
+  ),
+  blossom: ({ c, s }) => (
+    <>
+      <circle cx="32" cy="18" r="8" fill={s} stroke={c} strokeWidth="2.8" />
+      <circle cx="46" cy="28" r="8" fill={s} stroke={c} strokeWidth="2.8" />
+      <circle cx="41" cy="44" r="8" fill={s} stroke={c} strokeWidth="2.8" />
+      <circle cx="23" cy="44" r="8" fill={s} stroke={c} strokeWidth="2.8" />
+      <circle cx="18" cy="28" r="8" fill={s} stroke={c} strokeWidth="2.8" />
+      <circle cx="32" cy="32" r="6" fill={c} />
+    </>
+  ),
+  quiet: ({ c, s }) => (
+    <>
+      <path d="M15 25h8l11-9v32l-11-9h-8Z" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <path d="M40 27q3 5 0 10" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" />
+    </>
+  ),
+  shirt: ({ c, s }) => (
+    <path d="M22 12 12 20l4 8 6-3v27h20V25l6 3 4-8-10-8-6 4h-8Z" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+  ),
+  zzz: ({ c }) => (
+    <>
+      <text x="8" y="26" fontSize="20" fontWeight="700" fill={c} fontFamily="sans-serif">Z</text>
+      <text x="26" y="40" fontSize="16" fontWeight="700" fill={c} fontFamily="sans-serif">z</text>
+      <text x="38" y="53" fontSize="13" fontWeight="700" fill={c} fontFamily="sans-serif">z</text>
+    </>
+  ),
+  moon: ({ c, s }) => (
+    <path d="M40 10a22 22 0 1 0 0 44 18 18 0 0 1 0-44Z" fill={s} stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+  ),
   handshake: ({ c, s }) => (
     <>
-      <path d="M6 30l10-8 8 4 8-4 26 10-6 12-6-3" fill="none" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M24 26l10 6-3 6a4 4 0 0 1-6-4" fill={s} stroke={c} strokeWidth="3" strokeLinejoin="round" />
-      <path d="M6 30l6 14 8 4" fill="none" stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M20 58V28a4 4 0 0 1 8 0v-6a4 4 0 0 1 8 0v-4a4 4 0 0 1 8 0v4a4 4 0 0 1 8 0v20c0 11-6 16-6 16Z"
+        fill={s} stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"
+      />
+      <path d="M20 38l-7 5c-2 1.5-2 4.5 0 6.5l11 9h22" fill={s} stroke={c} strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
     </>
   ),
   mute: ({ c, s }) => (
