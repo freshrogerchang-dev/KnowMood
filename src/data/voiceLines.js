@@ -28,10 +28,10 @@ export const VOICE_LINES = [
 export const VOICE_TONES = {
   tired:     { pitch: 0.60, rate: 0.55, volume: 0.7 }, // 很低、很慢
   sad:       { pitch: 0.85, rate: 0.80, volume: 0.8 }, // 低、慢
-  angry:     { pitch: 0.80, rate: 1.50, volume: 1 },   // 低但很快 = 用力
-  happy:     { pitch: 1.45, rate: 1.15, volume: 1 },   // 高、偏快
-  scared:    { pitch: 1.60, rate: 1.60, volume: 0.9 }, // 又高又急
-  surprised: { pitch: 1.95, rate: 1.05, volume: 1 },   // 最高，但速度正常
+  angry:     { pitch: 0.80, rate: 1.15, volume: 1 },   // 低但偏快 = 用力
+  happy:     { pitch: 1.45, rate: 0.95, volume: 1 },   // 高、正常速度
+  scared:    { pitch: 1.60, rate: 1.25, volume: 0.9 }, // 又高又急，但不誇張
+  surprised: { pitch: 1.95, rate: 0.90, volume: 1 },   // 最高，速度正常
 }
 
 export const hasTone = (emotionId) => Boolean(VOICE_TONES[emotionId])
