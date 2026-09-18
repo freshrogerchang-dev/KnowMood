@@ -5,7 +5,7 @@ import EmotionFace from '../components/EmotionFace'
 import { getEmotion } from '../data/emotions'
 import { CALM_TOOLS } from '../data/calmTools'
 import { useApp } from '../lib/store'
-import { speak, stopSpeaking } from '../lib/speech'
+import { speakSmart as speak, stopSpeaking } from '../lib/speech'
 import { sfx } from '../lib/sound'
 import { INTENSITY } from './Journal'
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speakSmart as speak } from '../lib/speech'
 import { StarBadge, HoldToEnter } from '../components/UI'
 import EmotionFace from '../components/EmotionFace'
 import Icon from '../components/Icon'

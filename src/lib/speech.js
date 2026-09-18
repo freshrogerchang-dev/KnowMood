@@ -1,4 +1,6 @@
 // 語音朗讀（Web Speech API）。5-6 歲多半還不識字，所有題目都要能唸出來。
+import { playBakedSpeech, stopBakedSpeech } from './bakedSpeech'
+
 let voice = null
 let voicesReady = false
 
@@ -111,13 +113,28 @@ export function speak(text, settings = {}) {
     const u = new SpeechSynthesisUtterance(String(text))
     u.lang = voice?.lang || 'zh-TW'
     if (voice) u.voice = voice
-    u.rate = settings.speechRate ?? 0.85 // 比正常語速稍慢，方便還不太識字的孩子聽懂
+    u.rate = settings.speechRate ?? 0.75 // 比正常語速慢一點，方便還不太識字的孩子聽懂
     u.pitch = 1 // 用語音引擎原本設計的音高，不做人工變調，才不會聽起來金屬感很重
     u.volume = 1
     speechSynthesis.speak(u)
   } catch {
     /* 瀏覽器不支援就靜靜略過 */
   }
+}
+
+/**
+ * 唸一句話，優先播放預先烘焙好的 Google TTS 音檔（比瀏覽器語音自然、也比較大聲），
+ * 找不到對應的錄音才 fallback 回 speak()（瀏覽器語音）。
+ *
+ * 用在畫面固定的旁白／回饋句；像「試聽目前語速」這種要即時反映使用者調整的
+ * speechRate 設定值的地方，要繼續呼叫 speak()，不能用這個（烘焙音檔的語速是固定的）。
+ * @param {string} text
+ * @param {{speech?:boolean, speechRate?:number}} settings
+ */
+export function speakSmart(text, settings = {}) {
+  if (!text || settings.speech === false) return
+  if (playBakedSpeech(text)) return
+  speak(text, settings)
 }
 
 /**
@@ -150,6 +167,7 @@ export function speakWithTone(text, tone, settings = {}) {
 }
 
 export function stopSpeaking() {
+  stopBakedSpeech()
   if (speechSupported()) {
     try { speechSynthesis.cancel() } catch { /* noop */ }
   }

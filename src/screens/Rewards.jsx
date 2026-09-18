@@ -3,7 +3,7 @@ import { Screen, BigButton } from '../components/UI'
 import Icon from '../components/Icon'
 import { STICKERS, nextSticker } from '../data/stickers'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speakSmart as speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 
 export default function Rewards({ go }) {

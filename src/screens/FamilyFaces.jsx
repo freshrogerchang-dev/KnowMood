@@ -8,7 +8,7 @@ import Ruby from '../components/Ruby'
 import { activeEmotions, getEmotion } from '../data/emotions'
 import { useFamilyAlbum } from '../lib/familyPhotos'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speakSmart as speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 import { buildRound, buildChoices, randomOf } from '../lib/quiz'
 

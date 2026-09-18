@@ -6,7 +6,7 @@ import Ruby from '../components/Ruby'
 import { activeEmotions } from '../data/emotions'
 import { wordsOf } from '../data/vocabulary'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speakSmart as speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 
 const BASE_TABS = [

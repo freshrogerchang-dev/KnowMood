@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speakSmart as speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 import { BigButton } from './UI'
 import Icon from './Icon'

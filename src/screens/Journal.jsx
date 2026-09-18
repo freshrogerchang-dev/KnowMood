@@ -6,7 +6,7 @@ import Ruby from '../components/Ruby'
 import { activeEmotions, getEmotion } from '../data/emotions'
 import { wordsForIntensity } from '../data/vocabulary'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speakSmart as speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 
 export const todayStr = (d = new Date()) => {

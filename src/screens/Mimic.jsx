@@ -5,7 +5,7 @@ import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
 import { activeEmotions } from '../data/emotions'
 import { useApp } from '../lib/store'
-import { speak } from '../lib/speech'
+import { speakSmart as speak } from '../lib/speech'
 import { sfx } from '../lib/sound'
 import { randomOf } from '../lib/quiz'
 
