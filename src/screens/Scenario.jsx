@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, SpeakButton, BigButton } from '../components/UI'
 import Icon from '../components/Icon'
+import ScenarioIcon from '../components/ScenarioIcon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
@@ -86,7 +87,7 @@ export default function Scenario({ go }) {
       <div className="flex-1 flex flex-col items-center justify-center gap-4 py-2">
         {/* 情境卡 */}
         <div className="card w-full max-w-3xl p-5 flex items-center gap-4">
-          <span className="text-7xl md:text-8xl shrink-0 animate-floatY" aria-hidden="true">{q.icon}</span>
+          <ScenarioIcon name={q.icon} size={80} className="w-20 md:w-24 h-auto shrink-0 animate-floatY" />
           <p className="flex-1 text-2xl md:text-3xl leading-relaxed">{q.text}</p>
           <SpeakButton text={q.text} className="w-[64px] h-[64px] min-w-0 min-h-0 text-3xl shrink-0" />
         </div>

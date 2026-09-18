@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Screen, ProgressDots, SpeakButton, BigButton } from '../components/UI'
 import Icon from '../components/Icon'
+import ScenarioIcon from '../components/ScenarioIcon'
 import RoundEnd from '../components/RoundEnd'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
@@ -116,9 +117,11 @@ export default function Detective({ go }) {
         {/* 故事卡。進到後面兩步時收成一行 —— 故事已經讀過也唸過了，
             把垂直空間讓給溫度計，手機上才不用捲來捲去。點標題可以再聽一次。 */}
         <div className="card w-full p-3 md:p-5 flex items-start gap-3 md:gap-4" style={{ '--edge': '#D9C9A8' }}>
-          <span className={`shrink-0 ${phase === 'emotion' ? 'text-6xl md:text-7xl' : 'text-4xl'}`} aria-hidden="true">
-            {q.icon}
-          </span>
+          <ScenarioIcon
+            name={q.icon}
+            size={64}
+            className={`shrink-0 h-auto ${phase === 'emotion' ? 'w-16 md:w-20' : 'w-10'}`}
+          />
           <div className="flex-1 min-w-0">
             <p className="text-lg text-inkSoft flex items-center gap-1"><Icon name="detective" size={20} />{q.title}</p>
             {phase === 'emotion' ? (
