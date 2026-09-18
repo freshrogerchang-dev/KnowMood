@@ -11,6 +11,7 @@ import { activeEmotions } from '../data/emotions'
 const MODES = [
   { id: 'gallery',   icon: 'gallery',   title: '情緒圖鑑',     desc: '看看每種心情長什麼樣子', bg: '#EFD9A0', edge: '#C9A35C', ghost: 'happy' },
   { id: 'where',     icon: 'where',     title: '情緒在哪裡？', desc: '身體會有什麼反應',       bg: '#BFDCD8', edge: '#7BAFAA', ghost: 'calm' },
+  { id: 'bodylang',  icon: 'jump',      title: '動作猜心情',   desc: '看動作猜猜是什麼心情',   bg: '#C7E0C9', edge: '#5C9E76', ghost: 'happy' },
   { id: 'match',     icon: 'match',     title: '配對遊戲',     desc: '找出正確的表情',         bg: '#BFD4E8', edge: '#7E9DBC', ghost: 'surprised' },
   { id: 'scenario',  icon: 'scenario',  title: '情境猜猜看',   desc: '他現在是什麼心情？',     bg: '#D3CBE8', edge: '#9C8FC2', ghost: 'sad' },
   { id: 'detective', icon: 'detective', title: '情緒小偵探',   desc: '找線索，猜心情有多強',   bg: '#E4D3BC', edge: '#B99A75', ghost: 'scared' },

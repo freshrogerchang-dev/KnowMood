@@ -8,6 +8,7 @@ import VoiceEmotion from './screens/VoiceEmotion'
 import FamilyFaces from './screens/FamilyFaces'
 import Detective from './screens/Detective'
 import WhereEmotion from './screens/WhereEmotion'
+import BodyLanguage from './screens/BodyLanguage'
 import Mimic from './screens/Mimic'
 import Journal from './screens/Journal'
 import Rewards from './screens/Rewards'
@@ -25,6 +26,7 @@ const SCREENS = {
   family: FamilyFaces,
   detective: Detective,
   where: WhereEmotion,
+  bodylang: BodyLanguage,
   mimic: Mimic,
   journal: Journal,
   rewards: Rewards,

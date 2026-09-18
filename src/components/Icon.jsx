@@ -484,6 +484,53 @@ const P = {
       <circle cx="32" cy="43" r="2.4" fill={c} />
     </>
   ),
+
+  // ---------- 貼紙簿：固定色彩，不吃 tint（貼紙本身就該五顏六色，不用跟著模式卡題色） ----------
+  crown: ({ c }) => (
+    <>
+      <path d="M14 46 10 24l12 10 10-16 10 16 12-10-4 22Z" fill="#F0C34D" stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <rect x="14" y="46" width="36" height="7" rx="2" fill="#F0C34D" stroke={c} strokeWidth="3" />
+      <circle cx="32" cy="30" r="3" fill="#E08A6E" />
+      <circle cx="20" cy="34" r="2.4" fill="#6FC2C0" />
+      <circle cx="44" cy="34" r="2.4" fill="#6FC2C0" />
+    </>
+  ),
+  trophy: ({ c }) => (
+    <>
+      <path d="M22 16h20v13a10 10 0 0 1-20 0Z" fill="#F0C34D" stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <path d="M22 20h-7a2 2 0 0 0-2 2c0 6.5 4.5 9.5 9.5 10" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" />
+      <path d="M42 20h7a2 2 0 0 1 2 2c0 6.5-4.5 9.5-9.5 10" fill="none" stroke={c} strokeWidth="3" strokeLinecap="round" />
+      <path d="M32 39v9" stroke={c} strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M24 52h16" stroke={c} strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M25 48h14l-2 4H27Z" fill="#F0C34D" stroke={c} strokeWidth="2.6" strokeLinejoin="round" />
+    </>
+  ),
+  rocket: ({ c }) => (
+    <>
+      <path d="M32 9c8 6.5 11 16.5 11 26 0 4-1 7.5-3 10.5H24c-2-3-3-6.5-3-10.5 0-9.5 3-19.5 11-26Z" fill="#E7E9EC" stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <circle cx="32" cy="25" r="6" fill="#6FC2C0" stroke={c} strokeWidth="2.8" />
+      <path d="M23 33l-9 11 11-3.5Z" fill="#E08A6E" stroke={c} strokeWidth="2.6" strokeLinejoin="round" />
+      <path d="M41 33l9 11-11-3.5Z" fill="#E08A6E" stroke={c} strokeWidth="2.6" strokeLinejoin="round" />
+      <path d="M27 46h10l-3 9-2 3-2-3Z" fill="#F3C14F" stroke={c} strokeWidth="2.6" strokeLinejoin="round" />
+    </>
+  ),
+  rainbow: ({ c }) => (
+    <>
+      <path d="M9 47a23 23 0 0 1 46 0" fill="none" stroke="#E08A6E" strokeWidth="4.6" strokeLinecap="round" />
+      <path d="M16 47a16 16 0 0 1 32 0" fill="none" stroke="#F3C14F" strokeWidth="4.6" strokeLinecap="round" />
+      <path d="M23 47a9 9 0 0 1 18 0" fill="none" stroke="#6FAE82" strokeWidth="4.6" strokeLinecap="round" />
+      <circle cx="11" cy="49" r="6" fill="#EFEBE5" stroke={c} strokeWidth="2.4" />
+      <circle cx="53" cy="49" r="6" fill="#EFEBE5" stroke={c} strokeWidth="2.4" />
+    </>
+  ),
+  dino: ({ c }) => (
+    <>
+      <path d="M13 47c-2-8 1.5-15.5 9-17.5-1.5-6 2.5-11.5 8.5-11.5 5 0 8 3.5 8.5 7.5 6.5-0.5 12.5 4.5 12.5 11.5 0 4-2 7-5 9l2 8.5h-8l-1-5.5c-2 0.8-4 1-6.2 1H24l-1 5.5h-8Z"
+        fill="#93C08A" stroke={c} strokeWidth="3.2" strokeLinejoin="round" />
+      <path d="M27 19l3-6 3 6M35 21l3-6.5 3 6.5" fill="#78A868" stroke={c} strokeWidth="2.6" strokeLinejoin="round" />
+      <circle cx="23" cy="30" r="2.2" fill={c} />
+    </>
+  ),
 }
 
 /**

@@ -30,12 +30,12 @@ const IMAGES = {
 }
 
 /**
- * @param {{name:string, size?:number, className?:string}} props
+ * @param {{name:string, size?:number, className?:string, color?:string}} props
  */
-export default function ScenarioIcon({ name, size = 64, className = '' }) {
+export default function ScenarioIcon({ name, size = 64, className = '', color }) {
   const src = IMAGES[name]
   if (src) {
     return <img src={src} width={size} height={size} className={className} draggable={false} alt="" />
   }
-  return <Icon name={name} size={size} className={className} />
+  return <Icon name={name} size={size} className={className} color={color} />
 }
