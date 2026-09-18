@@ -8,8 +8,9 @@ import { activeEmotions } from '../data/emotions'
 import { VOICE_LINES, VOICE_TONES, hasTone, TONE_CLUE } from '../data/voiceLines'
 import { useApp } from '../lib/store'
 import { speak, speakWithTone, speechSupported } from '../lib/speech'
+import { recordedToneUrl, playRecordedTone } from '../lib/toneAudio'
 import { sfx } from '../lib/sound'
-import { buildRound, buildChoices, randomOf } from '../lib/quiz'
+import { buildRound, buildChoices } from '../lib/quiz'
 
 // 聲音裡的情緒
 // 同一句中性的話，用不同語調唸，讓孩子只靠「怎麼說」來判斷心情。
@@ -35,7 +36,8 @@ export default function VoiceEmotion({ go }) {
   const [plays, setPlays] = useState(0)
 
   const answer = round[qi]
-  const line = useMemo(() => randomOf(VOICE_LINES), [qi, seed]) // eslint-disable-line react-hooks/exhaustive-deps
+  const lineIndex = useMemo(() => Math.floor(Math.random() * VOICE_LINES.length), [qi, seed]) // eslint-disable-line react-hooks/exhaustive-deps
+  const line = VOICE_LINES[lineIndex]
   const choices = useMemo(
     () => (answer ? buildChoices(answer, pool, settings.choices) : []),
     [answer, pool, settings.choices, qi, seed], // eslint-disable-line react-hooks/exhaustive-deps
@@ -44,8 +46,14 @@ export default function VoiceEmotion({ go }) {
   const play = useCallback(() => {
     if (!answer) return
     setPlays((n) => n + 1)
-    speakWithTone(line, VOICE_TONES[answer.id], settings)
-  }, [answer, line, settings])
+    if (settings.speech === false) return
+    const tone = VOICE_TONES[answer.id]
+    const url = recordedToneUrl(answer.id, lineIndex)
+    // 有預錄音檔（Google TTS，比較自然）就優先播，沒有才 fallback 回瀏覽器語音
+    if (!url || !playRecordedTone(url, tone.volume)) {
+      speakWithTone(line, tone, settings)
+    }
+  }, [answer, line, lineIndex, settings])
 
   useEffect(() => {
     if (done || !usable || !answer) return
