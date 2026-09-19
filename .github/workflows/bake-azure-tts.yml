@@ -1,0 +1,38 @@
+# 一次性工具：用 Azure AI Speech 重新烘焙全部預錄語音（比 Google TTS 更自然的台灣腔）。
+# 只能手動觸發（Actions 頁 → Run workflow），因為這個沙箱/開發環境連不到 Azure 的網域，
+# 只能借 GitHub 的伺服器來呼叫。
+#
+# 執行前要先在 repo 的 Settings → Secrets and variables → Actions 設定：
+#   AZURE_SPEECH_KEY    - Azure 語音資源的金鑰
+#   AZURE_SPEECH_REGION - 資源地區（例如 southeastasia）
+name: Bake Azure TTS audio
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Synthesize audio with Azure Speech
+        env:
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+        run: python3 scripts/bake-azure-tts.py
+
+      - name: Commit and push generated audio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/assets/audio/speech/*.mp3 src/assets/audio/voice-emotion/*.mp3
+          git diff --cached --quiet && echo "no changes" || git commit -m "Re-bake narration audio with Azure TTS"
+          git push
