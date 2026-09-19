@@ -22,9 +22,9 @@ from xml.sax.saxutils import escape
 ROOT = Path(__file__).resolve().parent.parent
 DATA_FILE = Path(__file__).resolve().parent / "bake-azure-tts-data.json"
 
-KEY = os.environ["AZURE_SPEECH_KEY"]
-REGION = os.environ["AZURE_SPEECH_REGION"]
-VOICE = os.environ.get("AZURE_SPEECH_VOICE", "zh-TW-HsiaoChenNeural")
+KEY = os.environ["AZURE_SPEECH_KEY"].strip()
+REGION = os.environ["AZURE_SPEECH_REGION"].strip()
+VOICE = os.environ.get("AZURE_SPEECH_VOICE", "zh-TW-HsiaoChenNeural").strip()
 ENDPOINT = f"https://{REGION}.tts.speech.microsoft.com/cognitiveservices/v1"
 
 
@@ -56,24 +56,51 @@ def synthesize(text, pitch, rate_pct, volume_db):
 
 
 def preflight():
-    """先送一個測試請求，失敗的話把所有能看到的診斷資訊印出來就中止，
-    不要再花 8-10 分鐘把同一個錯誤重複 561 次。"""
-    text, pitch, rate_pct, volume_db = "測試", 0.0, 0.0, 0.0
-    ssml = build_ssml(text, pitch, rate_pct, volume_db)
-    print(f"preflight endpoint: {ENDPOINT}")
-    print(f"preflight voice: {VOICE}")
-    print(f"preflight ssml: {ssml}")
+    """先送測試請求，失敗的話把所有能看到的診斷資訊印出來就中止，
+    不要再花 8-10 分鐘把同一個錯誤重複 561 次。
+
+    先打一個簡單的 GET（語音清單）確認金鑰/地區本身沒問題，
+    再打實際會用到的 SSML 合成請求 —— 這樣兩步驟哪一步先炸，
+    就知道問題是出在認證/地區，還是 SSML 格式本身。"""
+    print(f"key length: {len(KEY)}, region: {REGION!r}, voice: {VOICE!r}")
+
+    voices_url = f"https://{REGION}.tts.speech.microsoft.com/cognitiveservices/voices/list"
+    req = urllib.request.Request(
+        voices_url,
+        headers={"Ocp-Apim-Subscription-Key": KEY, "User-Agent": "knowmood-tts-bake"},
+    )
     try:
-        audio = synthesize(text, pitch, rate_pct, volume_db)
-        print(f"preflight OK, {len(audio)} bytes")
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            voices = json.loads(resp.read())
+        names = [v["ShortName"] for v in voices if v.get("Locale", "").lower().startswith("zh-tw")]
+        print(f"voices/list OK, {len(voices)} total voices, zh-TW ones: {names}")
+        if VOICE not in names:
+            print(f"WARNING: {VOICE!r} not in the zh-TW voice list above!", file=sys.stderr)
     except urllib.error.HTTPError as e:
         body = e.read().decode(errors="replace")
-        print(f"PREFLIGHT FAILED: HTTP {e.code}", file=sys.stderr)
+        print(f"PREFLIGHT FAILED at voices/list: HTTP {e.code}", file=sys.stderr)
         print(f"response headers: {dict(e.headers)}", file=sys.stderr)
         print(f"response body: {body!r}", file=sys.stderr)
         sys.exit(1)
     except urllib.error.URLError as e:
-        print(f"PREFLIGHT FAILED: network error: {e}", file=sys.stderr)
+        print(f"PREFLIGHT FAILED at voices/list: network error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    text, pitch, rate_pct, volume_db = "測試", 0.0, 0.0, 0.0
+    ssml = build_ssml(text, pitch, rate_pct, volume_db)
+    print(f"preflight synth endpoint: {ENDPOINT}")
+    print(f"preflight synth ssml: {ssml}")
+    try:
+        audio = synthesize(text, pitch, rate_pct, volume_db)
+        print(f"preflight synth OK, {len(audio)} bytes")
+    except urllib.error.HTTPError as e:
+        body = e.read().decode(errors="replace")
+        print(f"PREFLIGHT FAILED at synth: HTTP {e.code}", file=sys.stderr)
+        print(f"response headers: {dict(e.headers)}", file=sys.stderr)
+        print(f"response body: {body!r}", file=sys.stderr)
+        sys.exit(1)
+    except urllib.error.URLError as e:
+        print(f"PREFLIGHT FAILED at synth: network error: {e}", file=sys.stderr)
         sys.exit(1)
 
 
