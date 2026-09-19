@@ -66,15 +66,17 @@ def main():
                 break
             except urllib.error.HTTPError as e:
                 body = e.read().decode(errors="replace")
-                if e.code == 429 or attempt < 3:
+                if e.code == 429 and attempt < 3:
                     time.sleep(2 * (attempt + 1))
-                else:
-                    errors.append((item["path"], item["text"], f"{e.code}: {body[:200]}"))
-            except Exception as e:  # noqa: BLE001 - one-off batch script, log and continue
-                if attempt < 3:
-                    time.sleep(2 * (attempt + 1))
-                else:
-                    errors.append((item["path"], item["text"], str(e)))
+                    continue
+                errors.append((item["path"], item["text"], f"{e.code}: {body[:200]}"))
+                break
+            except urllib.error.URLError as e:
+                # 網路層級的錯誤（DNS 解析失敗、連不上……）通常是設定問題，
+                # 重試也不會好，直接整批中止，不要傻等幾個小時才發現全部失敗。
+                print(f"FATAL network error, aborting: {e}", file=sys.stderr)
+                print("檢查 AZURE_SPEECH_REGION / AZURE_SPEECH_KEY 這兩個 secret 是否有正確設定。", file=sys.stderr)
+                sys.exit(1)
         if audio:
             out_path.write_bytes(audio)
         if i % 25 == 0 or i == len(items):
