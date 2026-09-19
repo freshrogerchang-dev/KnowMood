@@ -25,13 +25,19 @@ DATA_FILE = Path(__file__).resolve().parent / "bake-azure-tts-data.json"
 KEY = os.environ["AZURE_SPEECH_KEY"].strip()
 REGION = os.environ["AZURE_SPEECH_REGION"].strip()
 VOICE = os.environ.get("AZURE_SPEECH_VOICE", "zh-TW-HsiaoChenNeural").strip()
+VOICE_GENDER = "Male" if "Yun" in VOICE else "Female"
 ENDPOINT = f"https://{REGION}.tts.speech.microsoft.com/cognitiveservices/v1"
 
 
 def build_ssml(text, pitch, rate_pct, volume_db):
+    # voices/list 這一步用同一把金鑰/地區已經證實沒問題，只有這個合成請求本身
+    # 回空的 400 —— 很可能是這個資源/API 版本對 SSML 的驗證比較嚴格。
+    # 這裡照 Azure 官方 Speech Studio 產生的範例格式一字不差地組，
+    # 補上 xmlns / xmlns:mstts 命名空間跟 voice 上的 xml:lang/xml:gender。
     return (
-        '<speak version="1.0" xml:lang="zh-TW">'
-        f'<voice name="{VOICE}">'
+        '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" '
+        'xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-TW">'
+        f'<voice name="{VOICE}" xml:lang="zh-TW" xml:gender="{VOICE_GENDER}">'
         f'<prosody rate="{rate_pct:+.2f}%" pitch="{pitch:+.2f}st" volume="{volume_db:+.2f}dB">'
         f"{escape(text)}"
         "</prosody></voice></speak>"
