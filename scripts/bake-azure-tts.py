@@ -27,6 +27,30 @@ REGION = os.environ["AZURE_SPEECH_REGION"].strip()
 VOICE = os.environ.get("AZURE_SPEECH_VOICE", "zh-TW-HsiaoChenNeural").strip()
 VOICE_GENDER = "Male" if "Yun" in VOICE else "Female"
 ENDPOINT = f"https://{REGION}.tts.speech.microsoft.com/cognitiveservices/v1"
+TOKEN_URL = f"https://{REGION}.api.cognitive.microsoft.com/sts/v1.0/issuetoken"
+
+# 合成請求直接用 Ocp-Apim-Subscription-Key 一直被閘道層擋掉（空 body 400），
+# voices/list 用同一把金鑰卻沒事 —— 換成官方 SDK 常用的「先換權杖再打合成」流程試試看。
+# 權杖只活 10 分鐘，這裡每 8 分鐘重新換一次，跑一長批也不會用到過期的權杖。
+_token_cache = {"value": None, "issued_at": 0}
+TOKEN_TTL = 8 * 60
+
+
+def get_token():
+    now = time.time()
+    if _token_cache["value"] and now - _token_cache["issued_at"] < TOKEN_TTL:
+        return _token_cache["value"]
+    req = urllib.request.Request(
+        TOKEN_URL,
+        data=b"",
+        headers={"Ocp-Apim-Subscription-Key": KEY, "Content-Length": "0"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        token = resp.read().decode("utf-8")
+    _token_cache["value"] = token
+    _token_cache["issued_at"] = now
+    return token
 
 
 def build_ssml(text, pitch, rate_pct, volume_db):
@@ -50,7 +74,7 @@ def synthesize(text, pitch, rate_pct, volume_db):
         ENDPOINT,
         data=ssml.encode("utf-8"),
         headers={
-            "Ocp-Apim-Subscription-Key": KEY,
+            "Authorization": f"Bearer {get_token()}",
             "Content-Type": "application/ssml+xml",
             "X-Microsoft-OutputFormat": "audio-24khz-48kbitrate-mono-mp3",
             "User-Agent": "knowmood-tts-bake",
@@ -69,6 +93,19 @@ def preflight():
     再打實際會用到的 SSML 合成請求 —— 這樣兩步驟哪一步先炸，
     就知道問題是出在認證/地區，還是 SSML 格式本身。"""
     print(f"key length: {len(KEY)}, region: {REGION!r}, voice: {VOICE!r}")
+
+    try:
+        token = get_token()
+        print(f"token OK, length {len(token)}")
+    except urllib.error.HTTPError as e:
+        body = e.read().decode(errors="replace")
+        print(f"PREFLIGHT FAILED at issuetoken: HTTP {e.code}", file=sys.stderr)
+        print(f"response headers: {dict(e.headers)}", file=sys.stderr)
+        print(f"response body: {body!r}", file=sys.stderr)
+        sys.exit(1)
+    except urllib.error.URLError as e:
+        print(f"PREFLIGHT FAILED at issuetoken: network error: {e}", file=sys.stderr)
+        sys.exit(1)
 
     voices_url = f"https://{REGION}.tts.speech.microsoft.com/cognitiveservices/voices/list"
     req = urllib.request.Request(
