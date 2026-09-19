@@ -28,14 +28,18 @@ VOICE = os.environ.get("AZURE_SPEECH_VOICE", "zh-TW-HsiaoChenNeural")
 ENDPOINT = f"https://{REGION}.tts.speech.microsoft.com/cognitiveservices/v1"
 
 
-def synthesize(text, pitch, rate_pct, volume_db):
-    ssml = (
+def build_ssml(text, pitch, rate_pct, volume_db):
+    return (
         '<speak version="1.0" xml:lang="zh-TW">'
         f'<voice name="{VOICE}">'
         f'<prosody rate="{rate_pct:+.2f}%" pitch="{pitch:+.2f}st" volume="{volume_db:+.2f}dB">'
         f"{escape(text)}"
         "</prosody></voice></speak>"
     )
+
+
+def synthesize(text, pitch, rate_pct, volume_db):
+    ssml = build_ssml(text, pitch, rate_pct, volume_db)
     req = urllib.request.Request(
         ENDPOINT,
         data=ssml.encode("utf-8"),
@@ -51,7 +55,30 @@ def synthesize(text, pitch, rate_pct, volume_db):
         return resp.read()
 
 
+def preflight():
+    """先送一個測試請求，失敗的話把所有能看到的診斷資訊印出來就中止，
+    不要再花 8-10 分鐘把同一個錯誤重複 561 次。"""
+    text, pitch, rate_pct, volume_db = "測試", 0.0, 0.0, 0.0
+    ssml = build_ssml(text, pitch, rate_pct, volume_db)
+    print(f"preflight endpoint: {ENDPOINT}")
+    print(f"preflight voice: {VOICE}")
+    print(f"preflight ssml: {ssml}")
+    try:
+        audio = synthesize(text, pitch, rate_pct, volume_db)
+        print(f"preflight OK, {len(audio)} bytes")
+    except urllib.error.HTTPError as e:
+        body = e.read().decode(errors="replace")
+        print(f"PREFLIGHT FAILED: HTTP {e.code}", file=sys.stderr)
+        print(f"response headers: {dict(e.headers)}", file=sys.stderr)
+        print(f"response body: {body!r}", file=sys.stderr)
+        sys.exit(1)
+    except urllib.error.URLError as e:
+        print(f"PREFLIGHT FAILED: network error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def main():
+    preflight()
     items = json.loads(DATA_FILE.read_text(encoding="utf-8"))
     print(f"total items: {len(items)}")
 
