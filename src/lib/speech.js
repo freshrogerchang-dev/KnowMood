@@ -113,7 +113,7 @@ export function speak(text, settings = {}) {
     const u = new SpeechSynthesisUtterance(String(text))
     u.lang = voice?.lang || 'zh-TW'
     if (voice) u.voice = voice
-    u.rate = settings.speechRate ?? 0.75 // 比正常語速慢一點，方便還不太識字的孩子聽懂
+    u.rate = settings.speechRate ?? 0.82 // 比正常語速慢一點，方便還不太識字的孩子聽懂
     u.pitch = 1 // 用語音引擎原本設計的音高，不做人工變調，才不會聽起來金屬感很重
     u.volume = 1
     speechSynthesis.speak(u)

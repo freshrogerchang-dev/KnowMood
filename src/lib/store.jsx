@@ -10,7 +10,7 @@ export const DEFAULT_SETTINGS = {
   choices: 2,          // 每題選項數（2→4 漸進）
   roundLength: 6,      // 一輪幾題
   speech: true,        // 語音朗讀
-  speechRate: 0.75,
+  speechRate: 0.82,
   sound: true,         // 音效
   motion: true,        // 動畫
   zhuyin: true,        // 情緒名稱加注音
