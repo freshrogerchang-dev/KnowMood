@@ -1,4 +1,5 @@
-// 「聲音裡的情緒」的預錄音檔（Google Cloud TTS，cmn-TW-Wavenet-A）。
+// 本機生成的 Gemini WAV 優先；尚未匯入時使用既有 Google Cloud TTS MP3。
+// 「聲音裡的情緒」：既有 MP3 來源為 Google Cloud TTS，cmn-TW-Wavenet-A。
 //
 // 瀏覽器內建語音（Web Speech）唸中文常常不夠自然，這個遊戲又是靠孩子反覆
 // 聽好幾次來抓語氣差異，音質特別重要，所以改用預先烘焙好的音檔。
@@ -7,14 +8,14 @@
 //
 // 檔名對應 `${emotionId}-${lineIndex}`，lineIndex 是 VOICE_LINES 陣列的索引。
 // 如果之後改了 VOICE_LINES 的內容或順序，要重新用腳本烘焙音檔。
-const files = import.meta.glob('../assets/audio/voice-emotion/*.mp3', {
+const files = import.meta.glob('../assets/audio/voice-emotion/*.{mp3,wav}', {
   eager: true,
   import: 'default',
 })
 
 const AUDIO_URLS = {}
-for (const [path, url] of Object.entries(files)) {
-  const name = path.split('/').pop().replace('.mp3', '')
+for (const [path, url] of Object.entries(files).sort(([a], [b]) => a.localeCompare(b))) {
+  const name = path.split('/').pop().replace(/\.(mp3|wav)$/, '')
   AUDIO_URLS[name] = url
 }
 

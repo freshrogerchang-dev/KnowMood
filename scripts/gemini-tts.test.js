@@ -1,0 +1,67 @@
+import { describe, expect, it } from 'vitest'
+import { jobsFor, promptFor, waveFromAudio } from './generate-gemini-tts.mjs'
+import { appJobs, interactionRequest, styleFor, waveFromInteraction } from './generate-app-tts.mjs'
+
+describe('Gemini TTS generation', () => {
+  it('creates valid playable mono 24 kHz WAV from a successful Gemini PCM response', () => {
+    const pcm = Buffer.alloc(9600)
+    pcm.writeInt16LE(1234, 0)
+    const wav = waveFromAudio([{ inlineData: { mimeType: 'audio/L16;codec=pcm;rate=24000', data: pcm.toString('base64') } }])
+    expect(wav.toString('ascii', 0, 4)).toBe('RIFF')
+    expect(wav.readUInt32LE(4)).toBe(wav.length - 8)
+    expect(wav.readUInt32LE(24)).toBe(24000)
+    expect(wav.readUInt16LE(22)).toBe(1)
+    expect(wav.readUInt32LE(40)).toBe(pcm.length)
+    expect(wav.subarray(44)).toEqual(pcm)
+  })
+  it('accepts the live Gemini MIME format with spaces and channel count', () => {
+    const pcm = Buffer.alloc(9600)
+    const wav = waveFromAudio([{ inlineData: { mimeType: 'audio/l16; rate=24000; channels=1', data: pcm.toString('base64') } }])
+    expect(wav.subarray(44)).toEqual(pcm)
+    expect(() => waveFromAudio([{ inlineData: { mimeType: 'audio/l16; rate=24000; channels=2', data: pcm.toString('base64') } }])).toThrow()
+  })
+  it('rejects blocked, malformed or incompatible audio instead of saving a fake WAV', () => {
+    expect(() => waveFromAudio([])).toThrow()
+    expect(() => waveFromAudio([{ text: 'blocked' }])).toThrow()
+    expect(() => waveFromAudio([{ inlineData: { mimeType: 'audio/mp3', data: 'AAAA' } }])).toThrow()
+    expect(() => waveFromAudio([{ inlineData: { mimeType: 'audio/L16;codec=pcm;rate=24000', data: 'AAAA' } }])).toThrow()
+  })
+  it('uses the same line across six emotions and covers all 48 distinct full-set filenames', () => {
+    const sample = jobsFor(false)
+    expect(sample).toHaveLength(6)
+    expect(new Set(sample.map(j => j.text)).size).toBe(1)
+    expect(jobsFor(true)).toHaveLength(48)
+    expect(new Set(jobsFor(true).map(j => j.file)).size).toBe(48)
+    for (const job of jobsFor(true)) {
+      expect(promptFor(job.emotion, job.text)).toContain('台灣國語')
+      expect(promptFor(job.emotion, job.text)).toContain(`台詞：${job.text}`)
+    }
+  })
+})
+
+describe('complete app voice replacement', () => {
+  it('builds one unique output for every emotion demo and fixed narration line', () => {
+    const jobs = appJobs()
+    const keys = jobs.map((job) => `${job.group}/${job.file}`)
+    expect(jobs.filter((job) => job.group === 'voice-emotion')).toHaveLength(48)
+    expect(jobs.filter((job) => job.group === 'speech').length).toBeGreaterThan(513)
+    expect(new Set(keys).size).toBe(jobs.length)
+    expect(jobs.every((job) => job.text && job.prompt)).toBe(true)
+  })
+  it('builds a Gemini 3.8 Interactions request with verbatim text and structured Taiwanese style', () => {
+    const job = { text: '我要出去了', emotion: 'happy' }
+    const body = interactionRequest(job, 'gemini-3.8-flash-tts', 'Aoede')
+    expect(body.input[0].content[0].text).toBe(job.text)
+    expect(body.input[0].content[0].annotations[0]).toEqual({ type: 'speech_metadata', style: styleFor(job) })
+    expect(body.generation_config.speech_config).toEqual([{ voice: 'Aoede' }])
+    expect(styleFor(job)).toContain('台灣華語')
+  })
+  it('accepts only complete WAV audio from Gemini 3.8', () => {
+    const wav = Buffer.alloc(1024)
+    wav.write('RIFF', 0)
+    wav.write('WAVE', 8)
+    expect(waveFromInteraction({ output_audio: { data: wav.toString('base64') } })).toEqual(wav)
+    expect(waveFromInteraction({ steps: [{ type: 'model_output', content: [{ type: 'audio', mime_type: 'audio/wav', data: wav.toString('base64') }] }] })).toEqual(wav)
+    expect(() => waveFromInteraction({ output_audio: { data: Buffer.from('bad').toString('base64') } })).toThrow()
+  })
+})

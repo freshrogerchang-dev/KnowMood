@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Screen, ProgressDots, BigButton } from '../components/UI'
 import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
@@ -18,12 +18,13 @@ import { buildRound, buildChoices } from '../lib/quiz'
 export default function VoiceEmotion({ go }) {
   const { settings, addStars, recordAttempt } = useApp()
 
-  // 只留聽得出差別的情緒；語音關掉或瀏覽器不支援就玩不了
+  // 只留聽得出差別的情緒；語音關掉、或既沒有預錄音檔也不支援瀏覽器語音，就玩不了
   const pool = useMemo(
     () => activeEmotions(settings).filter((e) => hasTone(e.id)),
     [settings],
   )
-  const usable = speechSupported() && settings.speech !== false && pool.length >= 2
+  const canPlay = speechSupported() || pool.every((e) => VOICE_LINES.every((_, i) => recordedToneUrl(e.id, i)))
+  const usable = canPlay && settings.speech !== false && pool.length >= 2
   const len = settings.roundLength
 
   const [seed, setSeed] = useState(0)
@@ -34,6 +35,8 @@ export default function VoiceEmotion({ go }) {
   const [earned, setEarned] = useState(0)
   const [done, setDone] = useState(false)
   const [plays, setPlays] = useState(0)
+  const later = useRef(null) // 答題後延遲的重播／講解；離開畫面要清掉，不然會在別的畫面出聲
+  useEffect(() => () => clearTimeout(later.current), [])
 
   const answer = round[qi]
   const lineIndex = useMemo(() => Math.floor(Math.random() * VOICE_LINES.length), [qi, seed]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -69,11 +72,13 @@ export default function VoiceEmotion({ go }) {
       const first = wrong.length === 0
       if (first) { addStars(1); setEarned((n) => n + 1) }
       recordAttempt({ mode: 'voice', emotionId: answer.id, correct: first, tries: wrong.length + 1 })
-      setTimeout(() => speak(`對了，他是${answer.name}的聲音。${TONE_CLUE[answer.id]}`, settings), 400)
+      clearTimeout(later.current)
+      later.current = setTimeout(() => speak(`對了，他是${answer.name}的聲音。${TONE_CLUE[answer.id]}`, settings), 400)
     } else {
       sfx.retry(settings)
       setWrong((w) => [...w, c.id])
-      setTimeout(play, 500) // 答錯就再唸一次，讓他再聽
+      clearTimeout(later.current)
+      later.current = setTimeout(play, 500) // 答錯就再唸一次，讓他再聽
     }
   }
 
@@ -93,7 +98,7 @@ export default function VoiceEmotion({ go }) {
           <Icon name="mute" size={72} color="#B7AFA4" tint="#EEEAE4" />
           <h2 className="text-3xl font-display font-bold">這個遊戲需要語音</h2>
           <p className="text-xl text-inkSoft leading-relaxed">
-            {!speechSupported()
+            {!canPlay
               ? '這台裝置的瀏覽器不支援語音朗讀，換 Safari 或 Chrome 試試看。'
               : settings.speech === false
                 ? '請到家長設定把「語音朗讀」打開。'

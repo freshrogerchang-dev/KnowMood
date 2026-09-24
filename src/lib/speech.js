@@ -1,5 +1,6 @@
 // 語音朗讀（Web Speech API）。5-6 歲多半還不識字，所有題目都要能唸出來。
 import { playBakedSpeech, stopBakedSpeech } from './bakedSpeech'
+import { stopRecordedTone } from './toneAudio'
 
 let voice = null
 let voicesReady = false
@@ -168,6 +169,7 @@ export function speakWithTone(text, tone, settings = {}) {
 
 export function stopSpeaking() {
   stopBakedSpeech()
+  stopRecordedTone()
   if (speechSupported()) {
     try { speechSynthesis.cancel() } catch { /* noop */ }
   }
