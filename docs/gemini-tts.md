@@ -34,6 +34,12 @@ npm test
 npm run build
 ```
 
+## Batch 安全規則
+
+`batchGenerateContent` 的一般文字欄位只可放實際要朗讀的台詞。不要把「請用台灣華語」「只念台詞」等提示放進該欄位，否則 TTS 可能把提示本身一起念出。情緒與口音指示只有在 Interactions API 的 `speech_metadata` 結構化欄位中使用。
+
+生成工具使用 `verbatim-text-v2` fingerprint，舊版 Batch 音檔不會被當成有效輸出。生成、Batch 匯入與安裝都會檢查音訊時長是否符合台詞長度，過長音訊會被拒絕。
+
 `--all` 會呼叫 API 48 次，依現有 8 句台詞與 6 種情緒生成至 `.tts-output/full/`，不立刻修改 App。先開啟該目錄的 `index.html` 試聽整套，再執行 `--install`。匯入不呼叫 API，會檢查完整性與台詞，將 WAV 及來源紀錄加入 App；播放器優先使用同名 WAV，舊 MP3 保留作為未匯入時的來源。PWA 會快取 WAV。
 
 每次生成都會重新請求，可能產生費用；HTTP 400 最多請求三次，其他錯誤立即停止。可加 `--resume` 沿用相同音色、模型與提示的已完成音檔。HTTP 401/403 請查金鑰與模型權限，429 請查配額／計費，5xx 可稍後重試。失敗或中斷的整套不能匯入，可執行 `--all --resume` 補齊。生成後沒有自動部署或提交 git。

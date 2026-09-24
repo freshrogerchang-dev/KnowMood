@@ -3,11 +3,11 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { appJobs, fingerprint } from './generate-app-tts.mjs'
+import { appJobs, batchRequest, fingerprint, maxSpokenSeconds } from './generate-app-tts.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = join(root, '.tts-output', 'app-3.8')
-const statePath = join(output, 'batch-state.json')
+const statePath = join(output, 'batch-state-v2.json')
 const ledgerPath = join(output, 'manifest.json')
 const model = 'gemini-3.8-flash-tts'
 const voice = 'Aoede'
@@ -24,24 +24,21 @@ const jobs = appJobs()
 const valid = job => {
   const entry = ledger.jobs[`${job.group}/${job.file}`]
   const file = join(output, job.group, job.file)
-  return entry?.fingerprint === fingerprint(job, model, voice) && existsSync(file) && sha(readFileSync(file)) === entry.sha256
+  return entry?.fingerprint === fingerprint(job, model, voice) && entry.seconds <= maxSpokenSeconds(job.text) && existsSync(file) && sha(readFileSync(file)) === entry.sha256
 }
 const headers = { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' }
 
 async function submit() {
-  if (existsSync(statePath)) throw new Error('batch-state.json already exists; collect or remove it after inspection')
+  if (existsSync(statePath)) throw new Error('batch-state-v2.json already exists; collect or archive it after inspection')
   const pending = jobs.filter(job => !valid(job))
   if (!pending.length) return console.log('All files are already complete')
   const mapping = Object.fromEntries(pending.map((job, index) => [`b${String(index).padStart(4, '0')}`, `${job.group}/${job.file}`]))
   const requests = pending.map((job, index) => ({
     metadata: { key: `b${String(index).padStart(4, '0')}` },
-    request: {
-      contents: [{ role: 'user', parts: [{ text: job.prompt }] }],
-      generation_config: {
-        responseModalities: ['AUDIO'],
-        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
-      },
-    },
+    // Batch generateContent has no structured speech_metadata field. Sending
+    // prose directions here makes TTS occasionally speak those directions.
+    // Keep the speakable input strictly equal to the requested line.
+    request: batchRequest(job, voice),
   }))
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:batchGenerateContent`, {
     method: 'POST', headers, signal: AbortSignal.timeout(120000),
@@ -54,7 +51,7 @@ async function submit() {
 }
 
 async function collect() {
-  if (!existsSync(statePath)) throw new Error('No batch-state.json; submit first')
+  if (!existsSync(statePath)) throw new Error('No batch-state-v2.json; submit first')
   const state = readJson(statePath)
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${state.name}`, { headers: { 'x-goog-api-key': apiKey } })
   const result = await response.json()
@@ -95,7 +92,23 @@ async function collect() {
   if (failures.length) process.exitCode = 1
 }
 
+async function check() {
+  if (!existsSync(statePath)) throw new Error('No batch-state-v2.json; submit first')
+  const state = readJson(statePath)
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${state.name}`, { headers: { 'x-goog-api-key': apiKey } })
+  if (!response.ok || !response.body) throw new Error(`HTTP ${response.status}: Batch lookup failed`)
+  const reader = response.body.getReader(); const decoder = new TextDecoder(); let prefix = ''
+  while (prefix.length < 2 * 1024 * 1024) {
+    const { value, done } = await reader.read(); if (done) break
+    prefix += decoder.decode(value, { stream: true })
+    const match = prefix.match(/"state"\s*:\s*"(BATCH_STATE_[A-Z_]+)"/)
+    if (match) { await reader.cancel(); console.log(JSON.stringify({ name: state.name, state: match[1] })); return }
+  }
+  await reader.cancel(); throw new Error('Batch state was not found in the response prefix')
+}
+
 const command = process.argv[2]
 if (command === '--submit') await submit()
 else if (command === '--collect') await collect()
-else throw new Error('Use --submit or --collect')
+else if (command === '--check') await check()
+else throw new Error('Use --submit, --check or --collect')

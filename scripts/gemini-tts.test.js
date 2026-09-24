@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { jobsFor, promptFor, waveFromAudio } from './generate-gemini-tts.mjs'
-import { appJobs, interactionRequest, styleFor, waveFromInteraction } from './generate-app-tts.mjs'
+import { appJobs, batchRequest, interactionRequest, maxSpokenSeconds, styleFor, waveFromInteraction } from './generate-app-tts.mjs'
 
 describe('Gemini TTS generation', () => {
   it('creates valid playable mono 24 kHz WAV from a successful Gemini PCM response', () => {
@@ -55,6 +55,16 @@ describe('complete app voice replacement', () => {
     expect(body.input[0].content[0].annotations[0]).toEqual({ type: 'speech_metadata', style: styleFor(job) })
     expect(body.generation_config.speech_config).toEqual([{ voice: 'Aoede' }])
     expect(styleFor(job)).toContain('台灣華語')
+  })
+  it('keeps Batch TTS speakable input strictly equal to the requested line', () => {
+    const job = { text: '請看這張圖。', prompt: '這段提示絕對不能被朗讀。' }
+    const body = batchRequest(job, 'Aoede')
+    expect(body.contents).toEqual([{ role: 'user', parts: [{ text: job.text }] }])
+    expect(JSON.stringify(body)).not.toContain(job.prompt)
+  })
+  it('uses a conservative duration guard to reject spoken prompt leakage', () => {
+    expect(maxSpokenSeconds('好')).toBe(5)
+    expect(maxSpokenSeconds('這是一段比較長的旁白內容，需要合理增加可接受的時間。')).toBeGreaterThan(10)
   })
   it('accepts only complete WAV audio from Gemini 3.8', () => {
     const wav = Buffer.alloc(1024)

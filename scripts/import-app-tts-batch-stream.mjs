@@ -3,18 +3,18 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
-import { appJobs, fingerprint } from './generate-app-tts.mjs'
+import { appJobs, fingerprint, maxSpokenSeconds } from './generate-app-tts.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = join(root, '.tts-output', 'app-3.8')
-const responsePath = join(output, 'batch-response.json')
-const state = JSON.parse(readFileSync(join(output, 'batch-state.json'), 'utf8'))
+const responsePath = join(output, 'batch-response-v2.json')
+const state = JSON.parse(readFileSync(join(output, 'batch-state-v2.json'), 'utf8'))
 const ledgerPath = join(output, 'manifest.json')
 const ledger = JSON.parse(readFileSync(ledgerPath, 'utf8'))
 const jobs = appJobs()
 const model = 'gemini-3.8-flash-tts'; const voice = 'Aoede'
 const sha = value => createHash('sha256').update(value).digest('hex')
-const rawDir = join(output, 'batch-wav'); mkdirSync(rawDir, { recursive: true })
+const rawDir = join(output, 'batch-wav-v2'); mkdirSync(rawDir, { recursive: true })
 const binDir = join(root, '.tts-output/tools/imageio_ffmpeg/binaries')
 const ffmpeg = join(binDir, readdirSync(binDir).find(file => file.endsWith('.exe')) || 'missing')
 if (!existsSync(responsePath) || !existsSync(ffmpeg)) throw new Error('Missing Batch response or ffmpeg')
@@ -44,11 +44,13 @@ function importWav(key) {
   const namedWav = join(rawDir, `${key}.wav`); renameSync(tempPath, namedWav)
   const wav = readFileSync(namedWav)
   if (wav.length < 512 || wav.toString('ascii', 0, 4) !== 'RIFF' || wav.toString('ascii', 8, 12) !== 'WAVE') throw new Error(`Invalid WAV: ${key}`)
+  const seconds = (wav.length - 44) / 48000
+  if (seconds > maxSpokenSeconds(job.text)) throw new Error(`Audio is too long for ${key}: ${seconds.toFixed(2)}s`)
   const folder = join(output, job.group); mkdirSync(folder, { recursive: true })
   const destination = join(folder, job.file)
   execFileSync(ffmpeg, ['-hide_banner','-loglevel','error','-y','-i',namedWav,'-af','silenceremove=start_periods=1:start_duration=0.02:start_threshold=-50dB,loudnorm=I=-19:TP=-3:LRA=11','-ar','24000','-ac','1','-codec:a','libmp3lame','-b:a','64k',destination], { windowsHide: true, stdio: 'pipe' })
   const bytes = readFileSync(destination)
-  ledger.jobs[relative] = { ...job, fingerprint: fingerprint(job, model, voice), sha256: sha(bytes), bytes: bytes.length, seconds: (wav.length - 44) / 48000, generatedAt: new Date().toISOString(), batch: state.name }
+  ledger.jobs[relative] = { ...job, fingerprint: fingerprint(job, model, voice), sha256: sha(bytes), bytes: bytes.length, seconds, generatedAt: new Date().toISOString(), batch: state.name }
   imported++
   if (imported % 10 === 0) {
     writeFileSync(ledgerPath, JSON.stringify(ledger, null, 2) + '\n')

@@ -65,7 +65,17 @@ export function appJobs() {
   const tones = jobsFor(true).map(j=>({...j,group:'voice-emotion',file:j.file.replace('.wav','.mp3'),prompt:promptFor(j.emotion,j.text)}))
   return [...tones,...narration]
 }
-export function fingerprint(job, model, voice) { return sha(JSON.stringify([job.group,job.file,job.text,job.prompt,styleFor(job),model,voice,'mp3-64k-loudnorm-v1'])) }
+export function fingerprint(job, model, voice) { return sha(JSON.stringify([job.group,job.file,job.text,job.prompt,styleFor(job),model,voice,'verbatim-text-v2','mp3-64k-loudnorm-v1'])) }
+export function batchRequest(job, voice) {
+  return {
+    contents: [{ role: 'user', parts: [{ text: job.text }] }],
+    generation_config: {
+      responseModalities: ['AUDIO'],
+      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
+    },
+  }
+}
+export function maxSpokenSeconds(text) { return Math.max(5, text.length * 0.65 + 4) }
 
 async function main() {
   const {values} = parseArgs({options:{install:{type:'boolean'},'dry-run':{type:'boolean'},concurrency:{type:'string',default:'2'},model:{type:'string',default:'gemini-3.8-flash-tts'},voice:{type:'string',default:'Aoede'}}})
@@ -80,7 +90,7 @@ async function main() {
   const valid=job=>{
     const entry=ledger.jobs[`${job.group}/${job.file}`]
     const file=join(output,job.group,job.file)
-    return entry?.fingerprint===fingerprint(job,values.model,values.voice)&&existsSync(file)&&sha(readFileSync(file))===entry.sha256
+    return entry?.fingerprint===fingerprint(job,values.model,values.voice)&&entry.seconds<=maxSpokenSeconds(job.text)&&existsSync(file)&&sha(readFileSync(file))===entry.sha256
   }
   if(values.install){
     const missing=jobs.filter(j=>!valid(j))
@@ -140,7 +150,9 @@ async function main() {
         execFileSync(ffmpeg,['-hide_banner','-loglevel','error','-y','-i',source,'-af','silenceremove=start_periods=1:start_duration=0.02:start_threshold=-50dB,loudnorm=I=-19:TP=-3:LRA=11','-ar','24000','-ac','1','-codec:a','libmp3lame','-b:a','64k',destination],{windowsHide:true,stdio:'pipe'})
         const bytes=readFileSync(destination)
         if(bytes.length<500)throw new Error('Encoded audio is empty')
-        const entry={...job,fingerprint:fingerprint(job,values.model,values.voice),sha256:sha(bytes),bytes:bytes.length,seconds:(wav.length-44)/48000,generatedAt:new Date().toISOString()}
+        const seconds=(wav.length-44)/48000
+        if(seconds>maxSpokenSeconds(job.text))throw new Error(`Audio is too long for the requested line (${seconds.toFixed(2)}s)`)
+        const entry={...job,fingerprint:fingerprint(job,values.model,values.voice),sha256:sha(bytes),bytes:bytes.length,seconds,generatedAt:new Date().toISOString()}
         ledger.jobs[`${job.group}/${job.file}`]=entry;save()
         console.log(`${++completed}/${jobs.length} ${job.group}/${job.file}`)
         // Gemini Developer API free-tier TTS is currently limited to about

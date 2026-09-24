@@ -6,12 +6,12 @@ import { pipeline } from 'node:stream/promises'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = join(root, '.tts-output', 'app-3.8')
-const state = JSON.parse(readFileSync(join(output, 'batch-state.json'), 'utf8'))
+const state = JSON.parse(readFileSync(join(output, 'batch-state-v2.json'), 'utf8'))
 process.loadEnvFile(join(root, '.env.local'))
 const key = process.env.GEMINI_API_KEY
 if (!key) throw new Error('Missing GEMINI_API_KEY')
-const destination = join(output, 'batch-response.json')
-if (existsSync(destination)) throw new Error('batch-response.json already exists')
+const destination = join(output, 'batch-response-v2.json')
+if (existsSync(destination)) throw new Error('batch-response-v2.json already exists')
 
 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${state.name}`, {
   headers: { 'x-goog-api-key': key },
