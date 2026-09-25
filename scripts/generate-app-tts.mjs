@@ -11,6 +11,8 @@ import { TONE_CLUE } from '../src/data/voiceLines.js'
 import { EMOTION_WORDS } from '../src/data/vocabulary.js'
 import { EVENT_CHIPS } from '../src/data/journal.js'
 import { STICKERS } from '../src/data/stickers.js'
+import { NEW_GAME_SPEECH } from '../src/data/newGames.js'
+import { MONSTER_SPEECH } from '../src/data/monsterFamily.js'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const sha = value => createHash('sha256').update(value).digest('hex')
@@ -55,6 +57,8 @@ export function appJobs() {
   for (const words of Object.values(EMOTION_WORDS)) for (const word of words) add(word.word)
   for (const event of EVENT_CHIPS) add(event.text)
   for (const sticker of STICKERS) add(`恭喜！你得到新貼紙：${sticker.name}！`)
+  for (const line of NEW_GAME_SPEECH) add(line)
+  for (const line of MONSTER_SPEECH) add(line)
   for (const e of EMOTIONS) {
     add(`對了！這是${e.name}的動作。`)
     if (TONE_CLUE[e.id]) add(`對了，他是${e.name}的聲音。${TONE_CLUE[e.id]}`)

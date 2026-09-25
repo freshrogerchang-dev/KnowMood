@@ -1,4 +1,4 @@
-import { EMOTION_BY_ID } from './emotions'
+import { EMOTION_BY_ID } from './emotions.js'
 
 // 情境題庫：[id, 情緒, 圖示, 情境句, 答對後的說明]
 // 句子刻意寫短、只描述「看得到的事」，不直接說出情緒名稱，

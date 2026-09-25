@@ -63,3 +63,20 @@ Gemini Developer API 免費層目前對此 TTS 模型有每日請求上限。達
 Gemini 3.8 Flash TTS 支援 Batch API。大量生成可使用 `generate-app-tts-batch.mjs --submit` 提交、`download-app-tts-batch.mjs` 將大型回應串流至磁碟，再以 `import-app-tts-batch-stream.mjs` 逐段轉檔與更新 manifest。不要重複提交已有 `batch-state.json` 的工作。
 
 官方 API 與音訊格式：https://ai.google.dev/gemini-api/docs/generate-content/speech-generation
+
+## 新遊戲暫用 ElevenLabs
+
+Gemini 每日額度尚未重置時，可以只替目前 speech manifest 缺少的台詞產生暫用音檔：
+
+```dotenv
+ELEVENLABS_API_KEY=你的金鑰
+ELEVENLABS_VOICE_ID=你的台灣華語音色 ID
+```
+
+```powershell
+node scripts/generate-elevenlabs-fallback.mjs --dry-run
+node scripts/generate-elevenlabs-fallback.mjs
+node scripts/generate-elevenlabs-fallback.mjs --install
+```
+
+工具使用 `eleven_multilingual_v2`，只送出台詞文字。暫用音檔會另外留下來源紀錄；Gemini 補齊 759 段並執行原本的 `--install` 後，會以 Gemini 音檔與 manifest 全數取代。

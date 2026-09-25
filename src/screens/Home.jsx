@@ -21,6 +21,12 @@ const MODES = [
   { id: 'journal',   icon: 'journal',   title: '今天的心情',   desc: '說說今天發生的事',       bg: '#C4DCBC', edge: '#86AB7C', ghost: 'shy' },
   { id: 'calm',      icon: 'calm',      title: '冷靜角',       desc: '心情太大的時候來這裡',   bg: '#DCE4DA', edge: '#93A88C', ghost: 'happy' },
   { id: 'rewards',   icon: 'rewards',   title: '我的貼紙簿',   desc: '看看收集到的貼紙',       bg: '#EFC9D6', edge: '#C48EA3', ghost: 'happy' },
+  { id: 'cope',      icon: 'calm',      title: '那怎麼辦？',   desc: '認出心情，再選好方法',   bg: '#D7E7C8', edge: '#7CA56F', ghost: 'calm' },
+  { id: 'eyes',      icon: 'detective', title: '看眼睛猜心情', desc: '觀察眼睛和眉毛的線索',   bg: '#D8E5ED', edge: '#789BAF', ghost: 'surprised' },
+  { id: 'social',    icon: 'scenario',  title: '社交小故事',   desc: '一步一步看懂社交情境',   bg: '#E7D8C8', edge: '#B28C68', ghost: 'shy' },
+  { id: 'memory',    icon: 'match',     title: '翻牌配對',     desc: '找出表情和心情名字',     bg: '#D9D2EA', edge: '#9586BA', ghost: 'happy' },
+  { id: 'cause',     icon: 'idea',      title: '他為什麼這樣？', desc: '從心情想想發生的事',   bg: '#F0D6C8', edge: '#C48970', ghost: 'angry' },
+  { id: 'monsters',  icon: 'family',    title: '情緒小怪獸家族', desc: '和七隻怪獸照顧每種心情', bg: '#D8E8DE', edge: '#6E9F82', ghost: 'calm' },
 ]
 
 export default function Home({ go }) {

@@ -13,6 +13,8 @@ import Mimic from './screens/Mimic'
 import Journal from './screens/Journal'
 import Rewards from './screens/Rewards'
 import ParentSettings from './screens/ParentSettings'
+import { CopeGame, EyesGame, SocialStories, MemoryPairs, CauseGame } from './screens/NewGames'
+import MonsterFamily from './screens/MonsterFamily'
 import { installSpeechUnlock, stopSpeaking } from './lib/speech'
 import { useApp } from './lib/store'
 
@@ -31,6 +33,12 @@ const SCREENS = {
   journal: Journal,
   rewards: Rewards,
   parent: ParentSettings,
+  cope: CopeGame,
+  eyes: EyesGame,
+  social: SocialStories,
+  memory: MemoryPairs,
+  cause: CauseGame,
+  monsters: MonsterFamily,
 }
 
 export default function App() {
