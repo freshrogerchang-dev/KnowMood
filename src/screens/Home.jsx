@@ -28,7 +28,7 @@ export default function Home({ go }) {
   const pool = activeEmotions(settings)
 
   useEffect(() => {
-    const hi = state.childName ? `${state.childName}，我們來玩情緒遊戲！` : '我們來玩情緒遊戲！'
+    const hi = state.childName ? '哈囉，我們來玩情緒遊戲！' : '我們來玩情緒遊戲！'
     const t = setTimeout(() => speak(hi, settings), 400)
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps

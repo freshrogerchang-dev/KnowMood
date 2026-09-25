@@ -7,14 +7,14 @@ import { appJobs, fingerprint, maxSpokenSeconds } from './generate-app-tts.mjs'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = join(root, '.tts-output', 'app-3.8')
-const responsePath = join(output, 'batch-response-v2.json')
-const state = JSON.parse(readFileSync(join(output, 'batch-state-v2.json'), 'utf8'))
+const responsePath = join(output, 'batch-response-v3.json')
+const state = JSON.parse(readFileSync(join(output, 'batch-state-v3.json'), 'utf8'))
 const ledgerPath = join(output, 'manifest.json')
 const ledger = JSON.parse(readFileSync(ledgerPath, 'utf8'))
 const jobs = appJobs()
 const model = 'gemini-3.8-flash-tts'; const voice = 'Aoede'
 const sha = value => createHash('sha256').update(value).digest('hex')
-const rawDir = join(output, 'batch-wav-v2'); mkdirSync(rawDir, { recursive: true })
+const rawDir = join(output, 'batch-wav-v3'); mkdirSync(rawDir, { recursive: true })
 const binDir = join(root, '.tts-output/tools/imageio_ffmpeg/binaries')
 const ffmpeg = join(binDir, readdirSync(binDir).find(file => file.endsWith('.exe')) || 'missing')
 if (!existsSync(responsePath) || !existsSync(ffmpeg)) throw new Error('Missing Batch response or ffmpeg')

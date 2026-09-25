@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { jobsFor, promptFor, waveFromAudio } from './generate-gemini-tts.mjs'
 import { appJobs, batchRequest, interactionRequest, maxSpokenSeconds, styleFor, waveFromInteraction } from './generate-app-tts.mjs'
+import { EMOTION_WORDS } from '../src/data/vocabulary.js'
+import { EVENT_CHIPS } from '../src/data/journal.js'
+import { STICKERS } from '../src/data/stickers.js'
 
 describe('Gemini TTS generation', () => {
   it('creates valid playable mono 24 kHz WAV from a successful Gemini PCM response', () => {
@@ -55,6 +58,16 @@ describe('complete app voice replacement', () => {
     expect(body.input[0].content[0].annotations[0]).toEqual({ type: 'speech_metadata', style: styleFor(job) })
     expect(body.generation_config.speech_config).toEqual([{ voice: 'Aoede' }])
     expect(styleFor(job)).toContain('台灣華語')
+  })
+  it('includes every previously missing fixed phrase', () => {
+    const texts = new Set(appJobs().filter((job) => job.group === 'speech').map((job) => job.text))
+    const missing = [
+      ...Object.values(EMOTION_WORDS).flat().map((word) => word.word),
+      ...EVENT_CHIPS.map((event) => event.text),
+      ...STICKERS.map((sticker) => `恭喜！你得到新貼紙：${sticker.name}！`),
+      '哈囉，我們來玩情緒遊戲！',
+    ].filter((text) => !texts.has(text))
+    expect(missing).toEqual([])
   })
   it('keeps Batch TTS speakable input strictly equal to the requested line', () => {
     const job = { text: '請看這張圖。', prompt: '這段提示絕對不能被朗讀。' }

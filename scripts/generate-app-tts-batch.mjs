@@ -7,7 +7,7 @@ import { appJobs, batchRequest, fingerprint, maxSpokenSeconds } from './generate
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const output = join(root, '.tts-output', 'app-3.8')
-const statePath = join(output, 'batch-state-v2.json')
+const statePath = join(output, 'batch-state-v3.json')
 const ledgerPath = join(output, 'manifest.json')
 const model = 'gemini-3.8-flash-tts'
 const voice = 'Aoede'
@@ -29,7 +29,7 @@ const valid = job => {
 const headers = { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' }
 
 async function submit() {
-  if (existsSync(statePath)) throw new Error('batch-state-v2.json already exists; collect or archive it after inspection')
+  if (existsSync(statePath)) throw new Error('batch-state-v3.json already exists; collect or archive it after inspection')
   const pending = jobs.filter(job => !valid(job))
   if (!pending.length) return console.log('All files are already complete')
   const mapping = Object.fromEntries(pending.map((job, index) => [`b${String(index).padStart(4, '0')}`, `${job.group}/${job.file}`]))
@@ -51,7 +51,7 @@ async function submit() {
 }
 
 async function collect() {
-  if (!existsSync(statePath)) throw new Error('No batch-state-v2.json; submit first')
+  if (!existsSync(statePath)) throw new Error('No batch-state-v3.json; submit first')
   const state = readJson(statePath)
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${state.name}`, { headers: { 'x-goog-api-key': apiKey } })
   const result = await response.json()
@@ -93,7 +93,7 @@ async function collect() {
 }
 
 async function check() {
-  if (!existsSync(statePath)) throw new Error('No batch-state-v2.json; submit first')
+  if (!existsSync(statePath)) throw new Error('No batch-state-v3.json; submit first')
   const state = readJson(statePath)
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${state.name}`, { headers: { 'x-goog-api-key': apiKey } })
   if (!response.ok || !response.body) throw new Error(`HTTP ${response.status}: Batch lookup failed`)

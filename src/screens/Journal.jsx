@@ -1,30 +1,19 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Screen, SpeakButton, BigButton } from '../components/UI'
 import Icon from '../components/Icon'
 import EmotionFace from '../components/EmotionFace'
 import Ruby from '../components/Ruby'
 import { activeEmotions, getEmotion } from '../data/emotions'
 import { wordsForIntensity } from '../data/vocabulary'
+import { EVENT_CHIPS, journalSummary } from '../data/journal'
 import { useApp } from '../lib/store'
-import { speakSmart as speak } from '../lib/speech'
+import { speakSmart as speak, stopSpeaking } from '../lib/speech'
 import { sfx } from '../lib/sound'
 
 export const todayStr = (d = new Date()) => {
   const p = (n) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`
 }
-
-// 常見事件模板：孩子還不會打字，用點的最快；大人也可以直接輸入
-const EVENT_CHIPS = [
-  { icon: 'school', text: '在學校的時候' },
-  { icon: 'toy', text: '在玩玩具的時候' },
-  { icon: 'friends', text: '跟朋友一起玩' },
-  { icon: 'meal', text: '吃飯的時候' },
-  { icon: 'playground', text: '去公園玩' },
-  { icon: 'tv', text: '看電視的時候' },
-  { icon: 'bed', text: '要睡覺的時候' },
-  { icon: 'car', text: '出門坐車的時候' },
-]
 
 export const INTENSITY = [
   { v: 1, label: '一點點', scale: 0.55 },
@@ -45,6 +34,12 @@ export default function Journal({ go }) {
   const [word, setWord] = useState(null)   // 更精準的說法（選填）
   const [showLog, setShowLog] = useState(false)
   const [savedId, setSavedId] = useState(null)   // 剛存下的那筆，冷靜角做完要寫回去
+  const later = useRef(null)
+
+  useEffect(() => () => {
+    clearTimeout(later.current)
+    stopSpeaking()
+  }, [])
 
   const emotion = emotionId ? getEmotion(emotionId) : null
   // 符合這個強度的說法，最多給 3 個 —— 選項太多對 5 歲反而是負擔
@@ -61,7 +56,7 @@ export default function Journal({ go }) {
     setSavedId(row.id)
     addStars(1)
     sfx.star(settings)
-    speak(`記好了！你在${event.trim() || '今天'}覺得${label}，${INTENSITY[intensity - 1].label}。${emotion.cope}`, settings)
+    speak(journalSummary(event, label, INTENSITY[intensity - 1].label, emotion.cope), settings)
     setStep(3)
   }
 
@@ -166,7 +161,8 @@ export default function Journal({ go }) {
                     sfx.tap(settings)
                     setEmotionId(e.id)
                     speak(e.name, settings)
-                    setTimeout(() => { setStep(2); speak(`那個${e.name}有多少呢？`, settings) }, 600)
+                    clearTimeout(later.current)
+                    later.current = setTimeout(() => { setStep(2); speak(`那個${e.name}有多少呢？`, settings) }, 600)
                   }}
                   className="tap card p-3 flex flex-col items-center gap-1"
                   style={{ borderColor: e.color, '--edge': e.color}}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Screen, ProgressDots, SpeakButton, BigButton } from '../components/UI'
 import Icon from '../components/Icon'
 import RoundEnd from '../components/RoundEnd'
@@ -7,7 +7,7 @@ import Ruby from '../components/Ruby'
 import { activeEmotions, getEmotion } from '../data/emotions'
 import { reactionsOf, bodyOf, REACTION_OWNER } from '../data/reactions'
 import { useApp } from '../lib/store'
-import { speakSmart as speak } from '../lib/speech'
+import { speakSmart as speak, stopSpeaking } from '../lib/speech'
 import { sfx } from '../lib/sound'
 import { buildRound, shuffle, sample } from '../lib/quiz'
 
@@ -31,6 +31,12 @@ export default function WhereEmotion({ go }) {
   const [solved, setSolved] = useState(false)
   const [earned, setEarned] = useState(0)
   const [done, setDone] = useState(false)
+  const later = useRef(null)
+
+  useEffect(() => () => {
+    clearTimeout(later.current)
+    stopSpeaking()
+  }, [])
 
   const target = round[qi]
 
@@ -74,7 +80,8 @@ export default function WhereEmotion({ go }) {
         addStars(1)
         setEarned((n) => n + 1)
         setSolved(true)
-        setTimeout(() => {
+        clearTimeout(later.current)
+        later.current = setTimeout(() => {
           sfx.star(settings)
           const b = bodyOf(target.id)
           speak(`全部找到了！有${target.name}的時候，${b.feel}`, settings)

@@ -8,6 +8,9 @@ import { jobsFor, promptFor, waveFromAudio, directions } from './generate-gemini
 import { EMOTIONS } from '../src/data/emotions.js'
 import { EMOTION_REACTIONS } from '../src/data/reactions.js'
 import { TONE_CLUE } from '../src/data/voiceLines.js'
+import { EMOTION_WORDS } from '../src/data/vocabulary.js'
+import { EVENT_CHIPS } from '../src/data/journal.js'
+import { STICKERS } from '../src/data/stickers.js'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 const sha = value => createHash('sha256').update(value).digest('hex')
@@ -48,6 +51,10 @@ export function appJobs() {
   add('再看一次這個動作，猜猜看是什麼心情。')
   add('哈囉，我是這台裝置念故事給你聽的聲音。')
   add('我覺得開心')
+  add('哈囉，我們來玩情緒遊戲！')
+  for (const words of Object.values(EMOTION_WORDS)) for (const word of words) add(word.word)
+  for (const event of EVENT_CHIPS) add(event.text)
+  for (const sticker of STICKERS) add(`恭喜！你得到新貼紙：${sticker.name}！`)
   for (const e of EMOTIONS) {
     add(`對了！這是${e.name}的動作。`)
     if (TONE_CLUE[e.id]) add(`對了，他是${e.name}的聲音。${TONE_CLUE[e.id]}`)
